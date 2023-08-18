@@ -17,8 +17,19 @@
     $: $dvms.forEach(dvm => dvmPubkeys.add(dvm.pubkey));
 
     const unannouncedDvms = $ndk.storeSubscribe<NDKEvent>({
-        kinds: [65000, 65001]
+        kinds: [65001]
     });
+
+    let unannouncedDvmsEvents = new Map<string, NDKEvent>();
+
+    $: if ($unannouncedDvms) {
+        $unannouncedDvms.forEach((e) => {
+            if (!unannouncedDvmsEvents.has(e.pubkey)) {
+                unannouncedDvmsEvents.set(e.pubkey, e);
+                unannouncedDvmsEvents = unannouncedDvmsEvents;
+            }
+        })
+    }
 </script>
 
 <div class="flex flex-col divide-y divide-base-300 mt-10 max-w-prose mx-auto">
@@ -30,7 +41,7 @@
 <h1>Unannounced DVMs</h1>
 
 <div class="flex flex-col divide-y divide-base-300 mt-10 max-w-prose mx-auto">
-    {#each $unannouncedDvms as dvm}
+    {#each Array.from(unannouncedDvmsEvents.values()) as dvm}
         {#if !dvmPubkeys.has(dvm.pubkey)}
             <DvmListItem {dvm} />
         {/if}

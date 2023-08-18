@@ -1,17 +1,16 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import FeedItem from '$components/feed/FeedItem.svelte';
+    import JobRequestCard from '$components/jobs/JobRequestCard.svelte';
 	import ndk from '$stores/ndk';
-	import { NDKDVMJobResult, NDKDVMRequest, NDKEvent, mergeFilters } from '@nostr-dev-kit/ndk';
+	import { NDKDVMRequest, NDKEvent, mergeFilters } from '@nostr-dev-kit/ndk';
 	import type { NDKEventStore } from '@nostr-dev-kit/ndk-svelte';
-	import { EventContent } from '@nostr-dev-kit/ndk-svelte-components';
 	import { nip19 } from 'nostr-tools';
+	import JobRequestEditor from '../new/JobRequestEditor.svelte';
 
     let prevIds: string;
     let ids: string[];
 
     let jobRequests: NDKEventStore<NDKDVMRequest>;
-    let results: NDKEventStore<NDKEvent>;
 
     let expandEvent: NDKEvent | undefined;
 
@@ -39,31 +38,51 @@
             { closeOnEose: true },
             NDKDVMRequest
         );
-
-        results = $ndk.storeSubscribe(
-            { "#e": hexids },
-            { closeOnEose: false }
-        )
     }
 
-    let showNewJobRequest = true;
+    let jobRequest: NDKDVMRequest | undefined;
+
+    let showNewJobRequest = false;
+
+    function isTopLevelItem(item: NDKEvent) {
+        const hasJobAsInput = item.getMatchingTags('i').some(input => {
+            return input[2] === 'job';
+        });
+
+        return !hasJobAsInput;
+    }
+
+    $: console.log('jobRequests', $jobRequests);
 </script>
 
-<div class="flex flex-row gap-8">
-    <div class="flex flex-col divide-y divide-base-300 w-2/5 truncate">
-        {#each $jobRequests as jobRequest}
-            <FeedItem item={jobRequest} />
+<div class="grid grid-flow-col grid-cols-{expandEvent ? 3 : 2} gap-8">
+    <div class="flex flex-col gap-2">
+        <h3 class="text-2xl font-semibold mb-4">Job Requests</h3>
+        {#each $jobRequests as jobRequest (jobRequest)}
+            <JobRequestCard jobRequest={jobRequest} />
         {/each}
 
-        <button
-            class="btn btn-primary self-start mt-4"
-            on:click={() => showNewJobRequest = true}
-        >
-            Add new job request
-        </button>
+        {#if showNewJobRequest}
+            <div class="card">
+                <JobRequestEditor
+                    bind:jobRequest
+                    jobs={$jobRequests}
+                    on:cancel={() => showNewJobRequest = false}
+                />
+            </div>
+        {:else}
+            <button
+                class="btn btn-primary self-start"
+                on:click={() => showNewJobRequest = true}
+            >
+                Add new job request
+            </button>
+        {/if}
     </div>
 
-    <div class="flex flex-col divide-y divide-base-300 ">
+    <!-- <div class="flex flex-col divide-y divide-base-300 px-4">
+        <h3 class="text-2xl font-semibold mb-4">DVMs Feed</h3>
+
         {#each $results as result}
             <div on:click={() => expandEvent = result}>
                 <FeedItem item={result} />
@@ -72,10 +91,9 @@
     </div>
 
     {#if expandEvent}
-        <div class="flex flex-col w-2/5">
+        <div class="flex flex-col">
             {expandEvent.encode()}
-            {expandEvent.content}
             <EventContent ndk={$ndk} event={expandEvent} />
         </div>
-    {/if}
+    {/if} -->
 </div>

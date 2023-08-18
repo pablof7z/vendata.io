@@ -52,7 +52,7 @@
             <option value="event">Nostr Event</option>
 
             {#each jobs as job, i}
-                <option value={job.id}>Result of #{i+1} {job.encode().slice(0, 10)}...</option>
+                <option value={job.id}>Result of #{i+1} #{job.id.slice(0, 3)}...</option>
             {/each}
         </select>
     </div>

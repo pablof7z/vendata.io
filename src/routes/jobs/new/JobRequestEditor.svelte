@@ -29,11 +29,14 @@
         jobRequest.output = outputType;
 
         await jobRequest.sign();
+
+        dispatch('created');
+
         await jobRequest.publish();
 
         // console.log(jobRequest.rawEvent());
 
-        dispatch('created');
+
     }
 </script>
 
@@ -70,6 +73,10 @@
     <div class="card-actions">
         <button class="btn btn-primary" on:click={create}>
             Create
+        </button>
+
+        <button class="btn btn-ghost" on:click={() => dispatch('cancel')}>
+            Cancel
         </button>
     </div>
 </div>

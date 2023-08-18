@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { NDKDVMRequest, NDKEvent } from "@nostr-dev-kit/ndk";
     import JobRequestEditor from "./JobRequestEditor.svelte";
-	import JobCard from "$components/jobs/JobCard.svelte";
 	import FeedItem from "$components/feed/FeedItem.svelte";
 	import type { NDKEventStore } from "@nostr-dev-kit/ndk-svelte";
 	import ndk from "$stores/ndk";

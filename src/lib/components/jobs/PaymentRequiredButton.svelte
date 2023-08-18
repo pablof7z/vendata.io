@@ -22,8 +22,10 @@
                 invoice = await event.zap(parseInt(amountInMsats));
             }
 
+            console.log({invoice});
+
             const webln = await requestProvider();
-            webln.sendPayment(invoice);
+            await webln.sendPayment(invoice!);
             // TODO we should check here if the payment was successful, with a timer
             // that is canceled here; if the timer doesn't come back, show the modal again
             // or instruct the user to do something with the failed payment
