@@ -3,7 +3,6 @@
     import { nip19 } from 'nostr-tools';
 	import { type NDKEvent, type NDKTag } from "@nostr-dev-kit/ndk";
 	import { Avatar, Name } from "@nostr-dev-kit/ndk-svelte-components";
-    import Time from "svelte-time";
 	import PaymentRequiredButton from "$components/jobs/PaymentRequiredButton.svelte";
 	import { kindToText } from "$utils";
 
@@ -46,21 +45,25 @@
     }
 
     function encodeInput(input: NDKTag) {
-        const id = input[1];
-        let encodedId;
+        try {
+            const id = input[1];
+            let encodedId;
 
-        if (id.match(/:/)) {
-            const [ kind, pubkey, identifier ] = id.split(/:/);
-            encodedId = nip19.naddrEncode({
-                kind: parseInt(kind),
-                pubkey,
-                identifier
-            });
-        } else {
-            encodedId = nip19.noteEncode(id);
+            if (id.match(/:/)) {
+                const [ kind, pubkey, identifier ] = id.split(/:/);
+                encodedId = nip19.naddrEncode({
+                    kind: parseInt(kind),
+                    pubkey,
+                    identifier
+                });
+            } else {
+                encodedId = nip19.noteEncode(id);
+            }
+
+            return encodedId;
+        } catch (e) {
+            console.error(e);
         }
-
-        return encodedId;
     }
 
     let dvms: Record<string, NDKEvent[]> = {};

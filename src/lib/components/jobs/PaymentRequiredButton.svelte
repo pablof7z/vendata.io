@@ -38,7 +38,7 @@
 
 <button
     class="btn btn-neutral"
-    on:click={pay}
+    on:click|preventDefault|stopPropagation={pay}
 >
     Payment required
     {#if amountInMsats}

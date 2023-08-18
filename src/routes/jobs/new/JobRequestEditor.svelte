@@ -4,6 +4,7 @@
     import { createEventDispatcher } from "svelte";
 	import JobRequestEditorInput from './JobRequestEditorInput.svelte';
     import JobRequestEditorPayment from './JobRequestEditorPayment.svelte';
+	import { jobRequestKinds, kindToText } from '$utils';
 
     const dispatch = createEventDispatcher();
 
@@ -11,7 +12,7 @@
     export let jobs: NDKDVMRequest[] | undefined;
 
     let type: string = '65002';
-    let inputTag: NDKTag;
+    let inputTags: NDKTag[] = [[]];
     let outputType: string = 'text/plain';
     let amount: number = 1000;
 
@@ -20,13 +21,20 @@
             kind: parseInt(type),
         } as NostrEvent);
 
-        jobRequest.addInput(...inputTag);
+        for (const inputTag of inputTags) {
+            jobRequest.addInput(...inputTag);
+        }
 
         if (type === '65002') {
             jobRequest.tags.push([ "range", "100", "200"]);
         }
 
-        jobRequest.output = outputType;
+        // jobRequest.output = outputType;
+
+        if (type === '65005') {
+            if (prompt) jobRequest.tags.push([ "param", "prompt", prompt ]);
+            if (negativePrompt) jobRequest.tags.push([ "param", "negative_prompt", negativePrompt ]);
+        }
 
         await jobRequest.sign();
 
@@ -34,35 +42,74 @@
 
         await jobRequest.publish();
 
-        // console.log(jobRequest.rawEvent());
+        console.log(jobRequest.rawEvent());
 
 
+    }
+
+    let prompt: string | undefined;
+    let negativePrompt: string | undefined;
+
+    function addInput() {
+        inputTags.push([]);
+        inputTags = inputTags;
+    }
+
+    function removeInput(index: number) {
+        inputTags.splice(index, 1);
+        inputTags = inputTags.slice();  // re-assigning to trigger a reactive update in Svelte
+    }
+
+    function shouldShowOutput() {
+        return type === '65002' || type === '65005';
     }
 </script>
 
 <div class="card-body">
-    <div class="form-control w-full max-w-xs">
+    <div class="form-control w-full">
         <label class="label">
             <span class="label-text">Type</span>
         </label>
         <select class="select select-bordered" bind:value={type}>
             <option disabled selected>Pick one</option>
-            <option value="65002">Text extraction</option>
-            <option value="65003">Summarization</option>
-            <option value="65004">Translation</option>
+            {#each jobRequestKinds as kind}
+                <option value={kind.toString()}>{kindToText(kind)}</option>
+            {/each}
         </select>
     </div>
 
-    <h3>Input</h3>
+    <h3>
+        Input
+        <button class="btn btn-circle btn-neutral btn-xs ml-2" on:click={addInput}>
+            +
+        </button>
+    </h3>
 
-    <JobRequestEditorInput
-        bind:inputTag
-        {jobs}
-    />
+    {#each inputTags as inputTag, index (index)}
+        <div class="flex flex-row items-center group">
+            <button class="btn btn-ghost btn-xs group-hover:opacity-100 opacity-0 absolute -ml-6" title="remove" on:click={() => { removeInput(index) }}>x</button>
+            <JobRequestEditorInput bind:inputTag={inputTags[index]} {jobs} />
+        </div>
+    {/each}
 
     <h3>Output</h3>
 
     <input type="text" class="input input-bordered" placeholder="Desired output (mime type)" bind:value={outputType} />
+
+    <h3>Parameters</h3>
+
+    {#if type === "65002"}
+        <p>Range (for audio/video)</p>
+        <div class="flex flex-row gap-2">
+            <input type="number" class="input input-bordered" placeholder="Starting second" />
+            <input type="number" class="input input-bordered" placeholder="Finishing second" />
+        </div>
+    {:else if type === "65005"}
+        <h3>Prompt (optional)</h3>
+        <input type="text" class="input input-bordered" placeholder="" bind:value={prompt} />
+        <h3>Negative prompt (optional)</h3>
+        <input type="text" class="input input-bordered" placeholder="" bind:value={negativePrompt} />
+    {/if}
 
     <h3>Payment</h3>
 

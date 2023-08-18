@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { NDKDVMRequest, NDKEvent } from '@nostr-dev-kit/ndk';
-    import ndk from "$stores/ndk";
+	import type { NDKEvent } from '@nostr-dev-kit/ndk';
     import { userJobRequests } from '$stores/jobRequests';
 	import JobRequestCard from '$components/jobs/JobRequestCard.svelte';
+	import { derived } from 'svelte/store';
 
     function isTopLevelItem(item: NDKEvent) {
         const hasJobAsInput = item.getMatchingTags('i').some(input => {
@@ -11,15 +11,21 @@
 
         return !hasJobAsInput;
     }
+
+    const sortedJobRequests = derived(userJobRequests, ($userJobRequests) => {
+        return $userJobRequests.sort((a, b) => {
+            return b.created_at - a.created_at;
+        });
+    });
 </script>
 
 <div class="max-w-5xl mx-auto flex flex-col gap-6">
     <h1 class="text-base-content-300 text-3xl font-semibold">Your Requests</h1>
 
-    {#if $userJobRequests}
-        {#each $userJobRequests as jobRequest}
+    {#if $sortedJobRequests}
+        {#each $sortedJobRequests as jobRequest}
             {#if isTopLevelItem(jobRequest)}
-                <JobRequestCard {jobRequest} />
+                <JobRequestCard {jobRequest} compact={true} />
             {/if}
         {/each}
     {/if}

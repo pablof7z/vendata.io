@@ -1,6 +1,8 @@
 <script lang="ts">
 	import type { NDKEvent } from "@nostr-dev-kit/ndk";
+    import ndk from "$stores/ndk";
 	import JobStatusLabel from "./JobStatusLabel.svelte";
+	import { EventContent } from "@nostr-dev-kit/ndk-svelte-components";
 
     export let event: NDKEvent;
 
@@ -12,7 +14,7 @@
     {event.kind === 65001 ? "text-lg" : ""}
 ">
     <div class="flex-grow max-h-96 overflow-y-auto overflow-x-clip">
-        {event.content}
+        <EventContent ndk={$ndk} {event} showMedia={true} />
     </div>
     <div class="w-1/5 self-end text-right">
         <a href="https://nostr.com/{event.encode()}">

@@ -11,6 +11,8 @@
     $: {
         if (type === 'url') {
             inputTag = [ value, type ];
+        } else if (type === 'text') {
+            inputTag = [ value, type ];
         } else if (type === 'event') {
             try {
                 const decoded = nip19.decode(value);
@@ -43,13 +45,12 @@
     }
 </script>
 
-{type}
-
 <div class="flex flex-row gap-2">
     <div class="form-control">
         <select class="select select-bordered" bind:value={type}>
             <option value="url">URL</option>
             <option value="event">Nostr Event</option>
+            <option value="text">Text</option>
 
             {#each jobs as job, i}
                 <option value={job.id}>Result of #{i+1} #{job.id.slice(0, 3)}...</option>
@@ -59,9 +60,9 @@
 
     {#if type === 'url'}
         <input type="text" placeholder="URL" class="input input-bordered w-full max-w-xs" bind:value={value} />
+    {:else if type === 'text'}
+        <textarea rows="3" placeholder="Write some text..." class="textarea textarea-bordered w-full" bind:value={value} />
     {:else if type === 'event'}
         <input type="text" placeholder="Event ID <nevent1...>" class="input input-bordered w-full max-w-xs" bind:value />
     {/if}
 </div>
-
-{JSON.stringify(inputTag)}

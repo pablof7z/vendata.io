@@ -1,35 +1,26 @@
 <script lang="ts">
 	import type { NDKDVMRequest, NDKEvent } from "@nostr-dev-kit/ndk";
     import JobRequestEditor from "./JobRequestEditor.svelte";
-	import FeedItem from "$components/feed/FeedItem.svelte";
 	import type { NDKEventStore } from "@nostr-dev-kit/ndk-svelte";
-	import ndk from "$stores/ndk";
+	import { goto } from "$app/navigation";
 
     let jobs: NDKDVMRequest[] = [];
     let jobRequest: NDKDVMRequest | undefined;
-    let showNewJobRequest = false;
-
-    let results: NDKEventStore<NDKEvent>;
+    let showNewJobRequest = true;
 
     function jobCreated() {
         if (jobRequest) jobs.push(jobRequest);
         jobs = jobs;
         jobRequest = undefined;
         showNewJobRequest = false;
-
-        if (results) results.unsubscribe();
-
-        results = $ndk.storeSubscribe(
-            jobs.map((job) => job.filter()),
-            { closeOnEose: false },
-        );
+        goto(`/jobs/${jobs[0].encode()}`);
     }
 </script>
 
-<div class="flex flex-row gap-8">
-    <div class="flex flex-col divide-y divide-base-300 w-2/5 truncate">
+<div class="flex flex-col gap-8">
+    <div class="flex flex-col divide-y divide-base-300 truncate">
         {#if showNewJobRequest}
-            <div class="max-w-prose mx-auto card">
+            <div class="card">
                 <JobRequestEditor
                     bind:jobRequest
                     {jobs}
@@ -44,19 +35,7 @@
                 Add new job request
             </button>
         {/if}
-
-        {#each jobs as jobRequest}
-            <FeedItem item={jobRequest} />
-        {/each}
     </div>
-
-    {#if $results}
-        <div class="flex flex-col divide-y divide-base-300 flex-grow">
-            {#each $results as result}
-                <FeedItem item={result} />
-            {/each}
-        </div>
-    {/if}
 </div>
 
 <style>

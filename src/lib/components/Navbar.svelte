@@ -7,7 +7,7 @@
 	import { page } from "$app/stores";
 </script>
 
-<div class="navbar bg-base-100">
+<div class="navbar bg-base-100 mb-8 px-8">
     <div class="navbar-start">
         <div class="dropdown">
         <label tabindex="0" class="btn btn-ghost lg:hidden">
@@ -25,32 +25,33 @@
         <li><a>Item 3</a></li>
         </ul>
     </div>
-    <a class="btn btn-ghost normal-case text-xl">
+    <a href="/" class="btn btn-ghost normal-case text-xl">
         <Logo class="w-12 h-12"/>
         <h1 class="text-xl font-bold">
             VENDATA
         </h1>
     </a>
     </div>
+
     <div class="navbar-center hidden lg:flex">
-        <div class="tabs tabs-boxed">
-            <a
+        <ul class="menu menu-horizontal">
+            <li><a
                 class:tab-active={$page.url.pathname === "/"}
-                class="tab" href="/">Job Request Feed</a>
-            <a
+                class="" href="/">Job Request Feed</a></li>
+            <li><a
                 class:tab-active={$page.url.pathname === "/dvms"}
-                class="tab" href="/dvms">List DVMs</a>
-            <a
+                class="" href="/dvms">List DVMs</a></li>
+            <li><a
                 class:tab-active={$page.url.pathname === "/jobs/my"}
-                class="tab" href="/jobs/my">Your Jobs</a>
-            <a
+                class="" href="/jobs/my">Your Jobs</a></li>
+            <li><a
                 class:tab-active={$page.url.pathname === "/jobs/new"}
-                class="tab" href="/jobs/new">Create Job Chain</a>
-        </div>
+                class="" href="/jobs/new">Create Job Chain</a></li>
+        </ul>
     </div>
     <div class="navbar-end">
         {#if $currentUser}
-            <Name ndk={$ndk} user={$currentUser} class="w-12 h-12 rounded-lg" />
+            <Avatar ndk={$ndk} user={$currentUser} class="w-12 h-12 rounded-lg" />
         {:else}
         {/if}
     </div>

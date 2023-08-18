@@ -8,6 +8,8 @@
 
 {#if status === 'success'}
     <span class="text-success">Success</span>
+{:else if status === 'processing'}
+    <span class="text-info">Processing</span>
 {:else if status === 'payment-required' && event}
     <PaymentRequiredButton {event} />
 {:else}

@@ -79,21 +79,4 @@
             </button>
         {/if}
     </div>
-
-    <!-- <div class="flex flex-col divide-y divide-base-300 px-4">
-        <h3 class="text-2xl font-semibold mb-4">DVMs Feed</h3>
-
-        {#each $results as result}
-            <div on:click={() => expandEvent = result}>
-                <FeedItem item={result} />
-            </div>
-        {/each}
-    </div>
-
-    {#if expandEvent}
-        <div class="flex flex-col">
-            {expandEvent.encode()}
-            <EventContent ndk={$ndk} event={expandEvent} />
-        </div>
-    {/if} -->
 </div>
