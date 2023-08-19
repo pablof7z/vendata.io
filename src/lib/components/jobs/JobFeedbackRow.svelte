@@ -3,6 +3,7 @@
     import ndk from "$stores/ndk";
 	import JobStatusLabel from "./JobStatusLabel.svelte";
 	import { EventContent } from "@nostr-dev-kit/ndk-svelte-components";
+	import Time from "svelte-time/src/Time.svelte";
 
     export let event: NDKEvent;
 
@@ -16,6 +17,15 @@
         } catch (e) {
             return false;
         }
+    }
+
+    const timestamp = event.created_at!*1000;
+
+    function useRelativeTime() {
+        const now = Date.now();
+        const diff = now - timestamp;
+
+        return diff < 1000*60*60*24;
     }
 </script>
 
@@ -33,6 +43,12 @@
     </div>
     <div class="w-1/5 self-end text-right">
         <a href="https://nostr.com/{event.encode()}">
+            <Time
+                live={true}
+                relative={useRelativeTime()}
+                {timestamp}
+                class="text-xs font-normal my-2 block opacity-50 whitespace-nowrap"
+            />
             <JobStatusLabel {status} {event} />
         </a>
     </div>

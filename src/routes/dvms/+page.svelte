@@ -50,7 +50,7 @@
         <Nip89Tool on:cancel={() => showNip89Tool = false} on:done={() => showNip89Tool = false} />
     {:else}
         <div class="flex flex-col divide-y divide-base-300 mt-10 max-w-prose mx-auto">
-            {#each $dvms as dvm}
+            {#each $dvms as dvm (dvm.id)}
                 <DvmListItem {dvm} />
             {/each}
         </div>
