@@ -1,17 +1,33 @@
 <script lang="ts">
-	import JobCard from '$components/jobs/JobCard.svelte';
-	import { currentUser } from '$stores/current-user';
-    import ndk from '$stores/ndk';
-	import { NDKDVMRequest } from '@nostr-dev-kit/ndk';
+	import type { NDKEvent } from '@nostr-dev-kit/ndk';
+    import { allJobRequests } from '$stores/jobRequests';
+	import JobRequestCard from '$components/jobs/JobRequestCard.svelte';
+	import { derived } from 'svelte/store';
 
-    const myJobs = $ndk.storeSubscribe({
-        kinds: [65002 as number, 65003 as number],
-        authors: [$currentUser!.hexpubkey()]
-    }, undefined, NDKDVMRequest)
+    function isTopLevelItem(item: NDKEvent) {
+        const hasJobAsInput = item.getMatchingTags('i').some(input => {
+            return input[2] === 'job';
+        });
+
+        return !hasJobAsInput;
+    }
+
+    const sortedJobRequests = derived(allJobRequests, ($allJobRequests) => {
+        return $allJobRequests.sort((a, b) => {
+            return b.created_at - a.created_at;
+        });
+    });
 </script>
 
-<div class="flex flex-col gap-2">
-    {#each $myJobs as job}
-        <JobCard {job} />
-    {/each}
+<div class="max-w-5xl mx-auto flex flex-col gap-6">
+    <h1 class="text-base-content-300 text-3xl font-semibold">Your Requests</h1>
+
+    {#if $sortedJobRequests}
+        {#each $sortedJobRequests.slice(0, 50) as jobRequest}
+            {#if isTopLevelItem(jobRequest)}
+                <JobRequestCard {jobRequest} compact={true} />
+            {/if}
+        {/each}
+    {/if}
 </div>
+

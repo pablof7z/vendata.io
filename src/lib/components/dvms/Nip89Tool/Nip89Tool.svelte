@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { kindToText, jobRequestKinds } from "$utils";
     import { createEventDispatcher } from "svelte";
 	import Nip89Form from "./Nip89Form.svelte";
 	import { NDKEvent, NDKPrivateKeySigner, type NDKUserProfile, type NostrEvent } from "@nostr-dev-kit/ndk";

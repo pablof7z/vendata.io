@@ -5,9 +5,7 @@
 	import '../app.postcss';
 	import { NDKNip07Signer } from '@nostr-dev-kit/ndk';
 	import { currentUser } from '$stores/current-user';
-	import { page } from '$app/stores';
 	import Navbar from '$components/Navbar.svelte';
-	import Logo from '$icons/Logo.svelte';
 
 	onMount(async () => {
         try {
@@ -39,9 +37,11 @@
 <Navbar />
 
 <div class="mx-auto">
-    {#if $currentUser}
-        <slot />
-    {:else}
-        <button class="btn btn-primary" on:click={login}>Login</button>
-    {/if}
+	<slot />
 </div>
+
+<style lang="postcss">
+	:global(.userCard .userCard--avatar .avatar--image) {
+		@apply w-12 h-12;
+	}
+</style>

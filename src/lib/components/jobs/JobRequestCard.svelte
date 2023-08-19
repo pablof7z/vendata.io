@@ -9,6 +9,8 @@
 	import JobFeedbackRow from "./JobFeedbackRow.svelte";
 	import JobStatusLabel from "./JobStatusLabel.svelte";
 	import type { NDKDVMRequest, NDKTag, NDKEvent } from "@nostr-dev-kit/ndk";
+	import DvmListItem from "$components/dvms/DvmListItem.svelte";
+	import DvmCard from "$components/dvms/DvmCard.svelte";
 
     export let jobRequest: NDKDVMRequest;
     export let compact = false;
@@ -101,22 +103,16 @@
 
         <h3 class="font-semibold">DVMs ({Object.keys(dvms).length})</h3>
 
-        <div class="flex flex-col rounded-box bg-base-100 divide-y divide-base-300 gap-4 p-2">
-            {#each Object.entries(dvms) as [dvmPubkey, events]}
-                <div class="flex flex-row justify-between">
-                    <div class="flex flex-row gap-2 items-center">
-                        <Avatar ndk={$ndk} pubkey={dvmPubkey} class="w-12 h-12 object-cover rounded-lg" />
-                        <Name ndk={$ndk} pubkey={dvmPubkey} />
-                    </div>
-
-                    <JobStatusLabel status={mostRecentStatus(events)} />
+        {#each Object.entries(dvms) as [dvmPubkey, events]}
+            <div class="flex flex-col gap-2">
+                <DvmCard pubkey={dvmPubkey} kind={jobRequest.kind} />
+                <div class="flex flex-col rounded-box bg-base-100 divide-y divide-base-300 gap-4 p-4">
+                    {#each events as event (event.id)}
+                        <JobFeedbackRow {event} />
+                    {/each}
                 </div>
-
-                {#each events as event (event.id)}
-                    <JobFeedbackRow {event} />
-                {/each}
-            {/each}
-        </div>
+            </div>
+        {/each}
     {/if}
 </EventCard>
 

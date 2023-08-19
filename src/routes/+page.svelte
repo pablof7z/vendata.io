@@ -15,12 +15,24 @@
           <h1 class="text-4xl font-black tracking-tight text-white sm:text-7xl">VENDATA</h1>
           <p class="text-xl leading-8 text-gray-300">Explore and interact with unstoppable Data Vending Machines over Nostr</p>
           <div class="mt-10 flex items-center justify-center gap-x-6">
-            <a href="#" class="btn btn-primary btn-wide btn-lg !rounded-full">Get Started</a>
+            <a href="/jobs" class="btn btn-primary btn-wide btn-lg !rounded-full">Get Started</a>
           </div>
         </div>
       </div>
     </div>
 </div>
+
+<div class="bg-base-100 px-6 py-32 lg:px-8">
+  <div class="mx-auto max-w-3xl text-base-300-content leading-7">
+    <p class="text-base font-semibold leading-7 text-accent">Introducing</p>
+    <h1 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">Data Vending Machines</h1>
+    <p class="mt-6 text-xl leading-8">Aliquet nec orci mattis amet quisque ullamcorper neque, nibh sem. At arcu, sit dui mi, nibh dui, diam eget aliquam. Quisque id at vitae feugiat egestas ac. Diam nulla orci at in viverra scelerisque eget. Eleifend egestas fringilla sapien.</p>
+    <div class="mt-10 max-w-2xl">
+      <p>Faucibus commodo massa rhoncus, volutpat. Dignissim sed eget risus enim. Mattis mauris semper sed amet vitae sed turpis id. Id dolor praesent donec est. Odio penatibus risus viverra tellus varius sit neque erat velit. Faucibus commodo massa rhoncus, volutpat. Dignissim sed eget risus enim. Mattis mauris semper sed amet vitae sed turpis id.</p>
+    </div>
+  </div>
+</div>
+
 
 <style>
     h1 span.bg {

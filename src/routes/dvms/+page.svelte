@@ -34,22 +34,15 @@
 </script>
 
 <div class="max-w-5xl mx-auto flex flex-col gap-8">
+
+
     <div class="mx-auto flex flex-col gap-4">
         <h1 class="text-7xl text-center font-black">Data Vending Machines</h1>
-    </div>
-
-    <div class="card max-w-2xl card-compact mx-auto items-start">
-        <div class="alert rounded-b-none text-base-100-content">
-            <Logo class="w-12 h-12" />
-            <span>What are DVMs?</span>
+        <div class="text-2xl text-base-100-content font-extralight text-center">
+            These are programs, serving and processing job requests on Nostr.
         </div>
-        <div class="card-body">
-            <div class="text-lg flex flex-col items-start gap-4">
-
-                <p>They are programs, serving and processing job requests on Nostr.</p>
-
-                <p>Each DVM can support an ever-expanding range of job types.</p>
-            </div>
+        <div class="text-lg text-base-100-content font-extralight text-center">
+            Each DVM can support an ever-expanding range of job types.
         </div>
     </div>
 
@@ -74,7 +67,7 @@
 
 
         <div class="flex flex-col divide-y divide-base-300 mt-10 max-w-prose mx-auto">
-            {#each Array.from(unannouncedDvmsEvents.values()) as dvm}
+            {#each Array.from(unannouncedDvmsEvents.values()) as dvm (dvm)}
                 {#if !dvmPubkeys.has(dvm.pubkey)}
                     <DvmListItem {dvm} />
                 {/if}

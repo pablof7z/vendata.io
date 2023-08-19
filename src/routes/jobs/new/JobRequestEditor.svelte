@@ -60,9 +60,8 @@
         inputTags = inputTags.slice();  // re-assigning to trigger a reactive update in Svelte
     }
 
-    function shouldShowOutput() {
-        return type === '65002' || type === '65005';
-    }
+    let shouldShowOutput = true;
+    $: shouldShowOutput = type !== '65005';
 </script>
 
 <div class="card-body">
@@ -92,9 +91,11 @@
         </div>
     {/each}
 
-    <h3>Output</h3>
+    {#if shouldShowOutput}
+        <h3>Output</h3>
 
-    <input type="text" class="input input-bordered" placeholder="Desired output (mime type)" bind:value={outputType} />
+        <input type="text" class="input input-bordered" placeholder="Desired output (mime type)" bind:value={outputType} />
+    {/if}
 
     <h3>Parameters</h3>
 

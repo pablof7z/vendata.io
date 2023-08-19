@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { eventUserReference, kindToText } from "$utils";
+	import { eventUserReference } from "$utils";
 	import type { NDKEvent } from "@nostr-dev-kit/ndk";
     import Time from "svelte-time";
 
@@ -26,6 +26,7 @@
             </h3>
 
             <a {href}>
+                {console.log({timestamp})}
                 <Time
                     relative={useRelativeTime()}
                     {timestamp}

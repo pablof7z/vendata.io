@@ -44,7 +44,7 @@
 		"@nostr-dev-kit/ndk": "^0.8.18",
 		"@nostr-dev-kit/ndk-cache-dexie": "^0.8.18",
 		"@nostr-dev-kit/ndk-svelte": "0.8.18",
-		"@nostr-dev-kit/ndk-svelte-components": "0.8.18",
+		"@nostr-dev-kit/ndk-svelte-components": "0.8.18-1",
 		"@tailwindcss/typography": "^0.5.9",
 		"daisyui": "^3.5.1",
 		"nostr-tools": "^1.14.0",
