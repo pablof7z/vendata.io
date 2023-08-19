@@ -1,10 +1,9 @@
 <script lang="ts">
 	import DvmListItem from '$components/dvms/DvmListItem.svelte';
+	import Nip89Tool from '$components/dvms/Nip89Tool/Nip89Tool.svelte';
     import ndk from '$stores/ndk';
 	import { jobRequestKinds } from '$utils';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
-
-    const DVMKinds = [65002, 65003];
 
     const dvms = $ndk.storeSubscribe<NDKEvent>({
         kinds: [31990 as number],
@@ -29,32 +28,41 @@
             }
         })
     }
+
+    let showNip89Tool = false;
 </script>
 
-<div class="max-w-5xl mx-auto">
+<div class="max-w-5xl mx-auto flex flex-col gap-8">
     <div class="mx-auto flex flex-col gap-4">
-        <h1 class="text-7xl text-center font-extralight">Data Vending Machines</h1>
+        <h1 class="text-7xl text-center font-black">Data Vending Machines</h1>
     </div>
 
-    <div class="flex flex-col divide-y divide-base-300 mt-10 max-w-prose mx-auto">
-        {#each $dvms as dvm}
-            <DvmListItem {dvm} />
-        {/each}
-    </div>
-
-    <div class="max-w-prose mx-auto flex flex-col gap-4">
-        <h1 class="text-5xl text-center font-bold">Unannounced DVMs</h1>
-        <h2 class="text-center leading-loose">These are DVMs that have been seen acting in the wild but that have not create a NIP-89 record.</h2>
-        <button class="btn btn-ghost">
-            Create NIP-89 for a DVM
-        </button>
-    </div>
-
-    <div class="flex flex-col divide-y divide-base-300 mt-10 max-w-prose mx-auto">
-        {#each Array.from(unannouncedDvmsEvents.values()) as dvm}
-            {#if !dvmPubkeys.has(dvm.pubkey)}
+    {#if showNip89Tool}
+        <Nip89Tool on:cancel={() => showNip89Tool = false} on:done={() => showNip89Tool = false} />
+    {:else}
+        <div class="flex flex-col divide-y divide-base-300 mt-10 max-w-prose mx-auto">
+            {#each $dvms as dvm}
                 <DvmListItem {dvm} />
-            {/if}
-        {/each}
-    </div>
+            {/each}
+        </div>
+
+        <hr>
+
+        <div class="max-w-prose mx-auto flex flex-col gap-4">
+            <h1 class="text-3xl text-center font-semibold">Unannounced DVMs</h1>
+            <h2 class="text-center leading-loose">These are DVMs that have been seen acting in the wild but that have not create a NIP-89 record.</h2>
+            <button class="btn btn-outline px-8 !rounded-full text-base-100-content self-center" on:click={() => showNip89Tool = !showNip89Tool}>
+                List your DVM with NIP-89
+            </button>
+        </div>
+
+
+        <div class="flex flex-col divide-y divide-base-300 mt-10 max-w-prose mx-auto">
+            {#each Array.from(unannouncedDvmsEvents.values()) as dvm}
+                {#if !dvmPubkeys.has(dvm.pubkey)}
+                    <DvmListItem {dvm} />
+                {/if}
+            {/each}
+        </div>
+    {/if}
 </div>

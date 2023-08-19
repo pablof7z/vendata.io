@@ -1,0 +1,128 @@
+<script lang="ts">
+    import { kindToText, jobRequestKinds } from "$utils";
+    import { createEventDispatcher } from "svelte";
+	import Nip89Form from "./Nip89Form.svelte";
+	import { NDKEvent, NDKPrivateKeySigner, type NDKUserProfile, type NostrEvent } from "@nostr-dev-kit/ndk";
+    import { nip19 } from "nostr-tools";
+	import ndk from "$stores/ndk";
+
+    const dispatch = createEventDispatcher();
+
+    let name = 'test';
+    let pubkey = '8cd9dbfdde52f6780e7a99c9a667b1f75d9cb61a9c90a2e1d85351c4f6a7c8b1';
+    let image = 'https://cdn.midjourney.com/bd588aed-e734-4043-99b3-352ee973de24/0_3.png';
+    let supportedKinds: number[] = [65100];
+    let about = 'This is a test';
+
+    let nip89Event: NDKEvent | null;
+    let rawEvent: NostrEvent | null;
+
+    async function formDone() {
+        const dvmProfile: NDKUserProfile = {
+            name,
+            image,
+            about
+        }
+
+        // check if there is an event we should overwrite
+        nip89Event = await $ndk.fetchEvent({
+            kinds: [31990 as number],
+            "#k": supportedKinds.map(kind => kind.toString()),
+            authors: [pubkey]
+        });
+
+        if (!nip89Event) {
+            nip89Event = new NDKEvent($ndk, {
+                kind: 31990,
+                pubkey,
+            } as NostrEvent);
+        }
+
+        nip89Event.content = JSON.stringify(dvmProfile);
+        nip89Event.created_at = Math.floor(Date.now() / 1000);
+        nip89Event.removeTag('k');
+        nip89Event.tags.push(...supportedKinds.map(kind => [ 'k', kind.toString() ]));
+        nip89Event.sig = undefined;
+
+        await nip89Event.toNostrEvent();
+
+        nip89Event = nip89Event;
+        rawEvent = nip89Event.rawEvent();
+    }
+
+
+
+    function cancel() {
+        dispatch('cancel')
+    }
+
+    let dvmPK: string;
+
+    async function sign() {
+        let pk = dvmPK;
+
+        if (dvmPK.startsWith("nsec")) {
+            pk = nip19.decode(dvmPK)?.data as string;
+        }
+
+        const signer = new NDKPrivateKeySigner(pk);
+        const user = await signer.user();
+        const hexpubkey = user.hexpubkey();
+
+        if (hexpubkey !== pubkey) {
+            alert('The pubkey you entered does not match the one in your private key, pubkey in private key: ' + hexpubkey);
+            return;
+        }
+
+        await nip89Event!.sign(signer);
+        nip89Event = nip89Event;
+    }
+
+    async function publish() {
+        await nip89Event!.publish();
+
+        dispatch("done");
+    }
+</script>
+
+<div class="card border-primary border-4 !rounded-box">
+    <div class="card-body gap-8">
+        {#if !nip89Event}
+            <Nip89Form
+                bind:name
+                bind:pubkey
+                bind:image
+                bind:supportedKinds
+                bind:about
+                on:done={formDone}
+                on:cancel={cancel}
+            />
+        {:else}
+            <h3 class="text-2xl text-base-100-content">Sign and publish this event</h3>
+            <div class="bg-base-300 text-base-300-content rounded-box p-4 overflow-auto">
+                <pre>{JSON.stringify(rawEvent, null, 4)}</pre>
+            </div>
+
+            {#if nip89Event.sig}
+                <button class="btn btn-primary btn-lg" on:click={publish}>
+                    Publish
+                </button>
+            {/if}
+
+            <div class="flex flex-row items-end gap-2">
+                <h3 class="text-2xl text-base-100-content">Enter your DVM private key to sign it here</h3>
+                <h4>
+                    or copy the event, sign it offline and publish it manually
+                </h4>
+            </div>
+
+            <div class="flex flex-row gap-4">
+                <input class="input input-bordered w-full" bind:value={dvmPK} placeholder="private key in nsec or hex format" />
+
+                <button class="btn btn-neutral" on:click={sign}>
+                    Sign
+                </button>
+            </div>
+        {/if}
+    </div>
+</div>

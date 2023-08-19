@@ -1,7 +1,7 @@
 <script lang="ts">
 	import ndk from '$stores/ndk';
-	import { kindToText } from '$utils';
-	import { NDKKind, type NDKEvent, type NDKUserProfile } from "@nostr-dev-kit/ndk";
+	import { jobRequestKinds, kindToText } from '$utils';
+	import type { NDKEvent, NDKUserProfile } from "@nostr-dev-kit/ndk";
 	import { Avatar, Name } from '@nostr-dev-kit/ndk-svelte-components';
 
     export let dvm: NDKEvent;
@@ -14,15 +14,9 @@
 
     let profile: NDKUserProfile | undefined;
 
-    const displayKinds = [
-        NDKKind.DVMJobRequestTranscription,
-        65003
-    ];
-
     if (dvm.content) {
         try {
             profile = JSON.parse(dvm.content) as unknown as NDKUserProfile;
-            console.log(profile);
         } catch (e) {}
     }
 
@@ -39,12 +33,17 @@
     <div class="flex flex-row gap-4 w-full card card-compact">
         <div class="card-body flex flex-col gap-4">
             <div class="flex flex-row gap-4">
-                <Avatar ndk={$ndk} userProfile={profile} {user} class="w-12 h-12 rounded-lg" />
-                <Name ndk={$ndk} userProfile={profile} {user} class="text-xl" />
+                <Avatar ndk={$ndk} userProfile={profile} {user} class="w-20 h-20 rounded-lg" />
+
+                <div class="flex flex-col gap-2">
+                    <Name ndk={$ndk} userProfile={profile} {user} class="!text-xl !text-base-100-content !font-semibold" />
+                    <span class="text-base">{profile?.about??""}</span>
+                </div>
             </div>
 
+            <h3 class="text-base-100-content text-lg">Features</h3>
             {#each dvm.getMatchingTags("k") as tag}
-                {#if displayKinds.includes(parseInt(tag[1]))}
+                {#if jobRequestKinds.includes(parseInt(tag[1]))}
                     {kindToText(parseInt(tag[1]))}
                 {/if}
             {/each}
