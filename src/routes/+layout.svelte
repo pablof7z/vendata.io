@@ -24,6 +24,7 @@
 	async function login() {
 		$ndk.signer = new NDKNip07Signer();
 		$currentUser = await $ndk.signer?.blockUntilReady();
+		$currentUser.ndk = $ndk;
 
 		if ($currentUser) {
 			localStorage.setItem('nostr-login', 'nip07');

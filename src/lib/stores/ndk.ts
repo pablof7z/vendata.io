@@ -32,15 +32,15 @@ if (relays) {
 
 export const defaultRelays = [
     'wss://pablof7z.nostr1.com',
-    // 'wss://purplepag.es',
+    'wss://purplepag.es',
     // 'ws://localhost:8080',
 
-    // 'wss://nos.lol',
-    // 'wss://relay.f7z.io',
-    // 'wss://relay.damus.io',
-    // 'wss://relay.snort.social',
-    // 'wss://offchain.pub/',
-    // 'wss://nostr-pub.wellorder.net'
+    'wss://nos.lol',
+    'wss://relay.f7z.io',
+    'wss://relay.damus.io',
+    'wss://relay.snort.social',
+    'wss://offchain.pub/',
+    'wss://nostr-pub.wellorder.net'
 ];
 
 if (!relayList || !Array.isArray(relayList) || relayList.length === 0) {
