@@ -4,18 +4,13 @@
 	import { nip19 } from "nostr-tools";
 	import ndk from "$stores/ndk";
 	import { onDestroy } from "svelte";
-	import { Avatar, Name } from "@nostr-dev-kit/ndk-svelte-components";
 	import { derived } from "svelte/store";
 	import JobFeedbackRow from "./JobFeedbackRow.svelte";
-	import JobStatusLabel from "./JobStatusLabel.svelte";
 	import type { NDKDVMRequest, NDKTag, NDKEvent } from "@nostr-dev-kit/ndk";
-	import DvmListItem from "$components/dvms/DvmListItem.svelte";
 	import DvmCard from "$components/dvms/DvmCard.svelte";
 
     export let jobRequest: NDKDVMRequest;
     export let compact = false;
-
-    console.log('jobRequest', jobRequest);
 
     const jobRequestType = kindToText(jobRequest.kind!);
 
@@ -51,6 +46,10 @@
         "#i": [ jobRequest.tagId()]
     }, { closeOnEose: false, groupableDelay: 1000 });
 
+    const jobResults = derived(results, ($results) => {
+        return $results.filter(result => result.kind === 65001);
+    });
+
     onDestroy(() => {
         results.unsubscribe();
         dependentJobs.unsubscribe();
@@ -68,38 +67,36 @@
             dvms = dvms;
         }
     }
-
-    function mostRecentStatus(events: NDKEvent[]) {
-        const mostRecentEvent = events.sort((a, b) => b.created_at! - a.created_at!)[0];
-        return mostRecentEvent.tagValue("status");
-    }
 </script>
 
 <EventCard event={jobRequest} title={jobRequestType} href={`/jobs/${jobRequest.encode()}`}>
-    {#if !compact}
-        <div class="whitespace-normal flex flex-col gap-4">
-            {#each inputs as input}
-                <div class="flex flex-col gap-2">
-                    <h3 class="font-semibold">
-                        INPUT
-                        {#if input[2]}
-                            <span class="font-normal opacity-50">({input[2]})</span>
-                        {/if}
-                    </h3>
-                    {#if input[2] === 'job'}
-                        output of
+    <div class="whitespace-normal flex flex-col gap-4">
+        {#each inputs as input}
+            <div class="flex flex-col gap-2">
+                <h3 class="font-semibold">
+                    INPUT
+                    {#if input[2]}
+                        <span class="font-normal opacity-50">({input[2]})</span>
+                    {/if}
+                </h3>
+                {#if input[2] === 'job'}
+                    <div class="flex flex-row gap-2">
+                        <span>output of</span>
                         <a href="/jobs/{encodeInput(input)}" class="text-accent">
                             #{input[1]?.slice(0, 8)}
                         </a>
                         (job chaining)
-                    {:else if input[2] === 'event'}
-                        #{input[1]?.slice(0, 8)}
-                    {:else}
-                        {input[1]}
-                    {/if}
-                </div>
-            {/each}
-        </div>
+                    </div>
+                {:else if input[2] === 'event'}
+                    #{input[1]?.slice(0, 8)}
+                {:else}
+                    {input[1]}
+                {/if}
+            </div>
+        {/each}
+    </div>
+
+    {#if !compact}
 
         <h3 class="font-semibold">DVMs ({Object.keys(dvms).length})</h3>
 
@@ -115,6 +112,11 @@
                 </div>
             {/each}
         </div>
+    {:else if $jobResults && $jobResults.length > 0}
+        <h3 class="font-semibold">Job Results ({$jobResults.length})</h3>
+        {#each $jobResults as jobResult (jobResult.id)}
+            <JobFeedbackRow event={jobResult} />
+        {/each}
     {/if}
 </EventCard>
 
