@@ -8,11 +8,11 @@
 
     const dispatch = createEventDispatcher();
 
-    let name = 'test';
-    let pubkey = '8cd9dbfdde52f6780e7a99c9a667b1f75d9cb61a9c90a2e1d85351c4f6a7c8b1';
-    let image = 'https://cdn.midjourney.com/bd588aed-e734-4043-99b3-352ee973de24/0_3.png';
+    let name = '';
+    let pubkey = '';
+    let image = '';
     let supportedKinds: number[] = [65100];
-    let about = 'This is a test';
+    let about = '';
 
     let nip89Event: NDKEvent | null;
     let rawEvent: NostrEvent | null;
