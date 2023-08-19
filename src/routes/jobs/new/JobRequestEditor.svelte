@@ -25,11 +25,12 @@
             jobRequest.addInput(...inputTag);
         }
 
-        if (type === '65002') {
-            jobRequest.tags.push([ "range", "100", "200"]);
-        }
+        if (shouldShowOutput)
+            jobRequest.output = outputType;
 
-        // jobRequest.output = outputType;
+        if (type === '65002') {
+            if (rangeStart && rangeEnd) jobRequest.tags.push([ "param", "range", rangeStart, rangeEnd ]);
+        }
 
         if (type === '65005') {
             if (prompt) jobRequest.tags.push([ "param", "prompt", prompt ]);
@@ -43,8 +44,6 @@
         await jobRequest.publish();
 
         console.log(jobRequest.rawEvent());
-
-
     }
 
     let prompt: string | undefined;
@@ -62,6 +61,9 @@
 
     let shouldShowOutput = true;
     $: shouldShowOutput = type !== '65005';
+
+    let rangeStart: string | undefined;
+    let rangeEnd: string | undefined;
 </script>
 
 <div class="card-body">
@@ -102,8 +104,8 @@
     {#if type === "65002"}
         <p>Range (for audio/video)</p>
         <div class="flex flex-row gap-2">
-            <input type="number" class="input input-bordered" placeholder="Starting second" />
-            <input type="number" class="input input-bordered" placeholder="Finishing second" />
+            <input type="number" class="input input-bordered" placeholder="Starting second" bind:value={rangeStart} />
+            <input type="number" class="input input-bordered" placeholder="Finishing second" bind:value={rangeEnd} />
         </div>
     {:else if type === "65005"}
         <h3>Prompt (optional)</h3>

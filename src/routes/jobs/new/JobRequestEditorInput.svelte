@@ -19,6 +19,9 @@
                 let id: string | undefined;
 
                 switch (decoded.type) {
+                    case 'npub':
+                        id = decoded.data;
+                        break;
                     case 'note':
                         id = decoded.data;
                         break;
@@ -45,7 +48,7 @@
     }
 </script>
 
-<div class="flex flex-row gap-2">
+<div class="flex flex-row gap-2 w-full">
     <div class="form-control">
         <select class="select select-bordered" bind:value={type}>
             <option value="url">URL</option>
