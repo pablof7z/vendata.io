@@ -26,7 +26,6 @@
             </h3>
 
             <a {href}>
-                {console.log({timestamp})}
                 <Time
                     relative={useRelativeTime()}
                     {timestamp}

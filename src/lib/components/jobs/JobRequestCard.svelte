@@ -103,16 +103,18 @@
 
         <h3 class="font-semibold">DVMs ({Object.keys(dvms).length})</h3>
 
-        {#each Object.entries(dvms) as [dvmPubkey, events]}
-            <div class="flex flex-col gap-2">
-                <DvmCard pubkey={dvmPubkey} kind={jobRequest.kind} />
-                <div class="flex flex-col rounded-box bg-base-100 divide-y divide-base-300 gap-4 p-4">
-                    {#each events as event (event.id)}
-                        <JobFeedbackRow {event} />
-                    {/each}
+        <div class="flex flex-col gap-8 divide-y divide-base-300">
+            {#each Object.entries(dvms) as [dvmPubkey, events]}
+                <div class="flex flex-col gap-2">
+                    <DvmCard pubkey={dvmPubkey} kind={jobRequest.kind} />
+                    <div class="flex flex-col rounded-box bg-base-100 divide-y divide-base-300 gap-4 p-4">
+                        {#each events as event (event.id)}
+                            <JobFeedbackRow {event} />
+                        {/each}
+                    </div>
                 </div>
-            </div>
-        {/each}
+            {/each}
+        </div>
     {/if}
 </EventCard>
 
