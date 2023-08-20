@@ -38,7 +38,7 @@
         </figure>
         <div class="card-body flex flex-col gap-4">
             <div class="flex flex-row gap-4">
-                <div class="flex flex-col gap-2 truncate">
+                <div class="flex flex-col gap-2 whitespace-normal">
                     <Name ndk={$ndk} userProfile={profile} {user} class="text-xl text-base-100-content truncate" />
                     <span class="text-base">
                         <EventContent

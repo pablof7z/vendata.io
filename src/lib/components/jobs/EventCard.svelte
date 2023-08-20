@@ -2,7 +2,8 @@
 	import { eventUserReference } from "$utils";
 	import type { NDKEvent } from "@nostr-dev-kit/ndk";
     import Time from "svelte-time";
-    import { EventCardDropdownMenu } from "@nostr-dev-kit/ndk-svelte-components";
+    import { Avatar, EventCardDropdownMenu, Name } from "@nostr-dev-kit/ndk-svelte-components";
+	import ndk from "$stores/ndk";
 
     export let event: NDKEvent;
     export let title: string | undefined = undefined;
@@ -18,13 +19,24 @@
     }
 </script>
 
-<div class="card card-compact">
-    <div class="card-body flex flex-col gap-8">
+<div class="card card-compact group">
+    <div class="card-body flex flex-col gap-3">
         <div class="card-title justify-between border-b border-base-300 pb-2">
-            <h3>
-                {title}
-                <span class="font-normal opacity-50">{eventUserReference(event)}</span>
-            </h3>
+            <div class="flex flex-row items-center gap-4">
+                <h3>
+                    {title}
+                    <span class="font-normal opacity-50">{eventUserReference(event)}</span>
+                </h3>
+
+                <div class="flex flex-row items-center gap-2 font-normal text-xs opacity-50 group-hover:opacity-100 transition-all duration-50">
+                    <Avatar ndk={$ndk} pubkey={event.pubkey} class="w-8 h-8 rounded-lg" />
+                    <div>
+                        requested by
+                        <Name ndk={$ndk} pubkey={event.pubkey} class="font-normal" />
+                    </div>
+                </div>
+
+            </div>
 
             <div class="flex flex-row gap-2 dropdown dropdown-end text-sm font-normal">
                 <EventCardDropdownMenu {event} />

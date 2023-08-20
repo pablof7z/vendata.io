@@ -48,7 +48,6 @@
 
 <div class="flex flex-col gap-8">
     <div class="flex flex-col gap-2">
-        <h3 class="text-2xl font-semibold mb-4">Job Requests</h3>
         {#each $jobRequests as jobRequest (jobRequest)}
             <JobRequestCard jobRequest={jobRequest} relatedJobRequests={relatedJobRequests} />
         {/each}

@@ -47,7 +47,7 @@
                 live={true}
                 relative={useRelativeTime()}
                 {timestamp}
-                class="text-xs font-normal my-2 block opacity-50 whitespace-nowrap"
+                class="text-xs font-normal my-0.5 block opacity-50 whitespace-nowrap"
             />
             <JobStatusLabel {status} {event} />
         </a>

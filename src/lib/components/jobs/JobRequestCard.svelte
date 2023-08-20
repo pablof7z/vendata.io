@@ -9,9 +9,6 @@
 	import type { NDKDVMRequest, NDKTag, NDKEvent } from "@nostr-dev-kit/ndk";
 	import DvmCard from "$components/dvms/DvmCard.svelte";
 	import JobRequestEditor from "./JobRequestEditor/JobRequestEditor.svelte";
-    import { openModal } from 'svelte-modals'
-    import JobRequestEditorModal from "$modals/JobRequestEditorModal.svelte";
-    import { Plus } from "phosphor-svelte";
 
     export let jobRequest: NDKDVMRequest;
     export let compact = false;
@@ -20,7 +17,6 @@
     if (relatedJobRequests) {
         relatedJobRequests.update((tree) => {
             if (!tree.has(jobRequest)) tree.add(jobRequest);
-            console.log({tree})
             return tree;
         });
 
@@ -34,21 +30,25 @@
     inputs = jobRequest.getMatchingTags('i');
 
     function encodeInput(input: NDKTag) {
-        const id = input[1];
-        let encodedId;
+        try {
+            const id = input[1];
+            let encodedId;
 
-        if (id.match(/:/)) {
-            const [ kind, pubkey, identifier ] = id.split(/:/);
-            encodedId = nip19.naddrEncode({
-                kind: parseInt(kind),
-                pubkey,
-                identifier
-            });
-        } else {
-            encodedId = nip19.noteEncode(id);
+            if (id.match(/:/)) {
+                const [ kind, pubkey, identifier ] = id.split(/:/);
+                encodedId = nip19.naddrEncode({
+                    kind: parseInt(kind),
+                    pubkey,
+                    identifier
+                });
+            } else {
+                encodedId = nip19.noteEncode(id);
+            }
+
+            return encodedId;
+        } catch (e) {
+            return "";
         }
-
-        return encodedId;
     }
 
     const results = $ndk.storeSubscribe<NDKEvent>({
@@ -95,14 +95,17 @@
     }
 
     let showNewJobRequest = false;
+    let shouldShowJobFeedback = false;
+
+    $: shouldShowJobFeedback = !compact;// && ($jobResults && $jobResults.length === 0);
 </script>
 
 <EventCard event={jobRequest} title={jobRequestType} href={`/jobs/${jobRequest.encode()}`}>
-    <div class="whitespace-normal flex flex-col gap-4">
+    <div class="whitespace-normal flex flex-col gap-2">
         {#each inputs as input}
-            <div class="flex flex-col gap-2">
+            <div class="flex flex-row items-center gap-2">
                 <h3 class="font-semibold">
-                    INPUT
+                    <span class="text-accent text-lg">INPUT</span>
                     {#if input[2]}
                         <span class="font-normal opacity-50">({input[2]})</span>
                     {/if}
@@ -124,8 +127,10 @@
         {/each}
     </div>
 
-    {#if !compact}
-        <h3 class="font-semibold">DVMs ({Object.keys(dvms).length})</h3>
+    {#if !compact && shouldShowJobFeedback}
+        {#if Object.keys(dvms).length === 0}
+            <h3 class="font-semibold">DVMs ({Object.keys(dvms).length})</h3>
+        {/if}
 
         <div class="flex flex-col gap-8 divide-y divide-base-300">
             {#each Object.entries(dvms) as [dvmPubkey, events]}
@@ -140,24 +145,11 @@
             {/each}
         </div>
     {:else if $jobResults && $jobResults.length > 0}
-        <h3 class="font-semibold">Job Results ({$jobResults.length})</h3>
+        <!-- <h3 class="font-semibold">Job Results ({$jobResults.length})</h3> -->
         {#each $jobResults as jobResult (jobResult.id)}
             <JobFeedbackRow event={jobResult} />
         {/each}
     {/if}
-
-    {#if !showNewJobRequest}
-        <button
-            class="btn btn-outline !rounded-full btn-sm font-normal self-start"
-            on:click={() => openModal(JobRequestEditorModal, {
-                suggestedJobRequestInput: jobRequest,
-                jobs: $relatedJobRequests ? Array.from($relatedJobRequests) : [jobRequest] })}
-        >
-            <Plus class="w-4 h-4 mr-1" />
-            Add dependent job
-        </button>
-    {/if}
-
 </EventCard>
 
 {#if showNewJobRequest}

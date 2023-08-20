@@ -22,13 +22,15 @@
     let outputType: string = 'text/plain';
     let amount: number = 1000;
     let params: NDKDvmParam[] = [];
-    let tTags: string;
+    let tTags: string | undefined;
 
     if (suggestedJobRequestInput) {
         inputTags = [ [ suggestedJobRequestInput.id, "job" ] ]
     }
 
-    function parseTTags(tTags: string): NDKTag[] {
+    function parseTTags(tTags: string | undefined): NDKTag[] {
+        if (!tTags) return [];
+
         return tTags.split(/[, ]/)
             .map(tag => tag.trim().replace(/^#/, ""))
             .filter(tag => tag.length > 0)
