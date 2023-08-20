@@ -35,11 +35,6 @@
 
         params.forEach(param => jobRequest.tags.push([ "param", ...param ]));
 
-        if (type === '65005') {
-            if (prompt) jobRequest.tags.push([ "param", "prompt", prompt ]);
-            if (negativePrompt) jobRequest.tags.push([ "param", "negative_prompt", negativePrompt ]);
-        }
-
         await jobRequest.sign();
 
         dispatch('created');
@@ -48,9 +43,6 @@
 
         console.log(jobRequest.rawEvent());
     }
-
-    let prompt: string | undefined;
-    let negativePrompt: string | undefined;
 
     function addInput() {
         inputTags.push([]);
@@ -64,9 +56,6 @@
 
     let shouldShowOutput = true;
     $: shouldShowOutput = type !== '65005';
-
-    let rangeStart: string | undefined;
-    let rangeEnd: string | undefined;
 </script>
 
 <div class="card-body flex flex-col gap-8">
