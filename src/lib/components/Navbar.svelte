@@ -49,11 +49,13 @@
                 <li><a
                     class:tab-active={$page.url.pathname === "/jobs/my"}
                     class="" href="/jobs/my">Your Jobs</a></li>
-                <li><a
-                    class:tab-active={$page.url.pathname === "/jobs/new"}
-                    class="" href="/jobs/new">Create Job Chain</a></li>
             {/if}
         </ul>
+
+        <a href="/jobs/new" class="btn btn-accent !rounded-full btn-outline ml-12 !py-1">
+            SUBMIT NEW JOB
+        </a>
+
     </div>
     <div class="navbar-end">
         <CurrentUser />

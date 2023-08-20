@@ -13,7 +13,7 @@ module.exports = {
 		  "gradient2": "#FF7E34",
 		  "gradient3": "#916EFF",
 		  "gradient4": "#5CA2FF",
-		  "accent2": "#817EFF",
+		  "accent2": "#FB6038",
 		},
 		width: {
 		  'sidebar': '244px',
@@ -39,7 +39,7 @@ module.exports = {
 			...require("daisyui/src/theming/themes")["[data-theme=light]"],
 			"base-100": "#f2f2f2",
 			"base-200": "#ffffff",
-			"accent": "#FB6038",
+			"accent": "#817EFF",
 			".card": {
 			  "background": "white",
 			  "box-shadow": "0 0 0 1px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1)"
@@ -99,7 +99,7 @@ module.exports = {
 			".tab-active": {
 			  "color": "#ffffff",
 			},
-			"accent": "#FF685E",
+			"accent": "#817EFF",
 			".btn": {
 			  "border-radius": "5px",
 			  "text-transform": "none",
