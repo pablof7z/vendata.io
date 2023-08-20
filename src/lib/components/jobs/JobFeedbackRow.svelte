@@ -34,7 +34,7 @@
     {event.kind === 65001 ? "text-lg" : ""}
 ">
     <div class="flex-grow overflow-y-auto overflow-x-clip
-        {contentIsImageUrl() ? "" : "max-h-96"}
+        {contentIsImageUrl() ? "" : "max-h-48"}
     ">
         {#if event.kind === 65001 && contentIsImageUrl()}
             <img src={event.content} class="max-h-96" />

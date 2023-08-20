@@ -1,12 +1,19 @@
 <script lang="ts">
+	import { eventUserReference, kindToText } from "$utils";
 	import type { NDKDVMRequest, NDKTag } from "@nostr-dev-kit/ndk";
 	import { nip19 } from "nostr-tools";
 
     export let jobs: NDKDVMRequest[] = [];
     export let inputTag: NDKTag | undefined = undefined;
 
-    let type: string;
-    let value: string;
+    console.log(`initializing with`, inputTag)
+
+    let type: string | undefined = inputTag ? inputTag[1] : undefined;
+    let value: string | undefined = inputTag ? inputTag[0] : undefined;
+
+    if (type === "job") {
+        type = value;
+    }
 
     $: {
         if (type === 'url') {
@@ -48,24 +55,22 @@
     }
 </script>
 
-<div class="flex flex-row gap-2 w-full">
-    <div class="form-control">
-        <select class="select select-bordered" bind:value={type}>
-            <option value="url">URL</option>
-            <option value="event">Nostr Event</option>
-            <option value="text">Text</option>
+<div class="flex flex-col gap-2 w-full">
+    <select class="select select-bordered" bind:value={type}>
+        <option value="event" selected={type === 'event'}>Nostr Event</option>
+        <option value="url" selected={type === 'url'}>URL</option>
+        <option value="text" selected={type === 'text'}>Text</option>
 
-            {#each jobs as job, i}
-                <option value={job.id}>Result of #{i+1} #{job.id.slice(0, 3)}...</option>
-            {/each}
-        </select>
-    </div>
+        {#each jobs as job, i}
+            <option value={job.id} selected={value === job.id}>Result of {kindToText(job.kind)} {eventUserReference(job)}...</option>
+        {/each}
+    </select>
 
     {#if type === 'url'}
-        <input type="text" placeholder="URL" class="input input-bordered w-full max-w-xs" bind:value={value} />
+        <input type="text" placeholder="URL" class="input input-bordered w-full" bind:value={value} />
     {:else if type === 'text'}
         <textarea rows="3" placeholder="Write some text..." class="textarea textarea-bordered w-full" bind:value={value} />
     {:else if type === 'event'}
-        <input type="text" placeholder="Event ID <nevent1...>" class="input input-bordered w-full max-w-xs" bind:value />
+        <input type="text" placeholder="Event ID <nevent1...>" class="input input-bordered w-full" bind:value />
     {/if}
 </div>

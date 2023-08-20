@@ -4,13 +4,28 @@
 	import { nip19 } from "nostr-tools";
 	import ndk from "$stores/ndk";
 	import { onDestroy } from "svelte";
-	import { derived } from "svelte/store";
+	import { derived, type Readable, type Writable } from "svelte/store";
 	import JobFeedbackRow from "./JobFeedbackRow.svelte";
 	import type { NDKDVMRequest, NDKTag, NDKEvent } from "@nostr-dev-kit/ndk";
 	import DvmCard from "$components/dvms/DvmCard.svelte";
+	import JobRequestEditor from "./JobRequestEditor/JobRequestEditor.svelte";
+    import { openModal } from 'svelte-modals'
+    import JobRequestEditorModal from "$modals/JobRequestEditorModal.svelte";
+    import { Plus } from "phosphor-svelte";
 
     export let jobRequest: NDKDVMRequest;
     export let compact = false;
+    export let relatedJobRequests: Writable<Set<NDKEvent>>;
+
+    if (relatedJobRequests) {
+        relatedJobRequests.update((tree) => {
+            if (!tree.has(jobRequest)) tree.add(jobRequest);
+            console.log({tree})
+            return tree;
+        });
+
+        relatedJobRequests = relatedJobRequests;
+    }
 
     const jobRequestType = kindToText(jobRequest.kind!);
 
@@ -57,6 +72,17 @@
 
     let dvms: Record<string, NDKEvent[]> = {};
 
+    $: if ($relatedJobRequests && $dependentJobs.length > 0) {
+        relatedJobRequests.update((tree) => {
+            for (const event of $dependentJobs) {
+                if (!tree.has(event)) tree.add(event);
+            }
+            return tree;
+        });
+
+        relatedJobRequests = relatedJobRequests;
+    }
+
     $: for (const result of $results) {
         const key = result.pubkey;
         if (!dvms[key]) dvms[key] = [];
@@ -67,6 +93,8 @@
             dvms = dvms;
         }
     }
+
+    let showNewJobRequest = false;
 </script>
 
 <EventCard event={jobRequest} title={jobRequestType} href={`/jobs/${jobRequest.encode()}`}>
@@ -97,7 +125,6 @@
     </div>
 
     {#if !compact}
-
         <h3 class="font-semibold">DVMs ({Object.keys(dvms).length})</h3>
 
         <div class="flex flex-col gap-8 divide-y divide-base-300">
@@ -118,14 +145,42 @@
             <JobFeedbackRow event={jobResult} />
         {/each}
     {/if}
+
+    {#if !showNewJobRequest}
+        <button
+            class="btn btn-outline !rounded-full btn-sm font-normal self-start"
+            on:click={() => openModal(JobRequestEditorModal, {
+                suggestedJobRequestInput: jobRequest,
+                jobs: $relatedJobRequests ? Array.from($relatedJobRequests) : [jobRequest] })}
+        >
+            <Plus class="w-4 h-4 mr-1" />
+            Add dependent job
+        </button>
+    {/if}
+
 </EventCard>
+
+{#if showNewJobRequest}
+    <div class="card">
+        <JobRequestEditor
+            bind:jobRequest
+            jobs={[jobRequest]}
+            on:created={() => showNewJobRequest = false}
+            on:cancel={() => showNewJobRequest = false}
+        />
+    </div>
+{/if}
 
 {#if $dependentJobs.length > 0}
     <div class="flex flex-col rounded-box bg-base-100 divide-y divide-base-300 gap-4 p-2 ml-10">
         <h3 class="font-semibold">Dependent jobs ({$dependentJobs.length})</h3>
         {#each $dependentJobs as event}
             {#if event}
-                <svelte:self jobRequest={event} {compact} />
+                <svelte:self
+                    jobRequest={event}
+                    {relatedJobRequests}
+                    {compact}
+                />
             {:else}
                 no event?
             {/if}

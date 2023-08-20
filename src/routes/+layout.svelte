@@ -6,6 +6,8 @@
 	import { NDKNip07Signer } from '@nostr-dev-kit/ndk';
 	import { currentUser } from '$stores/current-user';
 	import Navbar from '$components/Navbar.svelte';
+	import { Modals, closeModal } from 'svelte-modals'
+	import { fade } from 'svelte/transition';
 
 	onMount(async () => {
         try {
@@ -36,6 +38,13 @@
 
 <Navbar />
 
+<Modals>
+    <div
+        slot="backdrop"
+        class="backdrop z-10 fixed"
+        on:click={closeModal}
+        transition:fade={{ duration: 100 }}></div>
+</Modals>
 <div class="mx-auto">
 	<slot />
 </div>
@@ -44,4 +53,14 @@
 	:global(.userCard .userCard--avatar .avatar--image) {
 		@apply w-12 h-12;
 	}
+
+	.backdrop {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        right: 0;
+		backdrop-filter: blur(0.15rem);
+        left: 0;
+        background: rgba(0,0,0,0.50)
+    }
 </style>

@@ -2,17 +2,18 @@
 	import { page } from '$app/stores';
     import JobRequestCard from '$components/jobs/JobRequestCard.svelte';
 	import ndk from '$stores/ndk';
-	import { NDKDVMRequest, NDKEvent, mergeFilters } from '@nostr-dev-kit/ndk';
+	import { NDKDVMRequest, NDKEvent } from '@nostr-dev-kit/ndk';
 	import type { NDKEventStore } from '@nostr-dev-kit/ndk-svelte';
 	import { nip19 } from 'nostr-tools';
-	import JobRequestEditor from '../new/JobRequestEditor.svelte';
+	import JobRequestEditor from '$components/jobs/JobRequestEditor/JobRequestEditor.svelte';
+    import { writable } from 'svelte/store';
+
+    const relatedJobRequests = writable<Set<NDKEvent[]>>(new Set());
 
     let prevIds: string;
     let ids: string[];
 
     let jobRequests: NDKEventStore<NDKDVMRequest>;
-
-    let expandEvent: NDKEvent | undefined;
 
     $: if (prevIds !== $page.params.ids) {
         prevIds = $page.params.ids;
@@ -49,14 +50,14 @@
     <div class="flex flex-col gap-2">
         <h3 class="text-2xl font-semibold mb-4">Job Requests</h3>
         {#each $jobRequests as jobRequest (jobRequest)}
-            <JobRequestCard jobRequest={jobRequest} />
+            <JobRequestCard jobRequest={jobRequest} relatedJobRequests={relatedJobRequests} />
         {/each}
 
         {#if showNewJobRequest}
             <div class="card">
                 <JobRequestEditor
                     bind:jobRequest
-                    jobs={$jobRequests}
+                    jobs={Array.from($relatedJobRequests)}
                     on:created={() => showNewJobRequest = false}
                     on:cancel={() => showNewJobRequest = false}
                 />

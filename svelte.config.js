@@ -19,6 +19,7 @@ const config = {
 			$actions: 'src/lib/actions',
 			$components: 'src/lib/components',
 			$icons: 'src/lib/icons',
+			$modals: 'src/lib/modals',
 			$stores: 'src/lib/stores',
 			$utils: 'src/lib/utils'
 		}

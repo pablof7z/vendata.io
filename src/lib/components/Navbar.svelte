@@ -2,7 +2,6 @@
 	import Logo from "$icons/Logo.svelte";
 
     import {currentUser} from '$stores/current-user';
-    import { Avatar, Name } from "@nostr-dev-kit/ndk-svelte-components";
 	import { page } from "$app/stores";
     import CurrentUser from "./CurrentUser.svelte";
 </script>

@@ -15,7 +15,7 @@
     }
 </script>
 
-<button class="card card-compact md:card-normal !bg-opacity-80 {bg} hover:!bg-opacity-100 transition-all duration-50" on:click>
+<button class="card !bg-opacity-80 {bg} hover:!bg-opacity-100 transition-all duration-50" on:click>
     <div class="card-body text-center items-start justify-stretch">
         <div class="card-title">{kindToText(kind)}</div>
 

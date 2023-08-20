@@ -1,7 +1,6 @@
 <script lang="ts">
-	import type { NDKDVMRequest, NDKEvent } from "@nostr-dev-kit/ndk";
-    import JobRequestEditor from "./JobRequestEditor.svelte";
-	import type { NDKEventStore } from "@nostr-dev-kit/ndk-svelte";
+	import type { NDKDVMRequest } from "@nostr-dev-kit/ndk";
+    import JobRequestEditor from "$components/jobs/JobRequestEditor/JobRequestEditor.svelte";
 	import { goto } from "$app/navigation";
 
     let jobs: NDKDVMRequest[] = [];
