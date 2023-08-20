@@ -44,7 +44,7 @@
 
         dispatch('created');
 
-        // await jobRequest.publish();
+        await jobRequest.publish();
 
         console.log(jobRequest.rawEvent());
     }
@@ -171,3 +171,14 @@
         </div>
     {/if}
 </div>
+
+<style>
+    :global(section.params) {
+        @apply flex flex-col gap-1;
+        @apply my-2;
+    }
+
+    :global(section.params h3) {
+        @apply text-accent2;
+    }
+</style>
