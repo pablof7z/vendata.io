@@ -19,7 +19,7 @@
 </script>
 
 <div class="dropdown {hasFocus ? 'dropdown-open': ''} dropdown-end">
-    <label  tabindex="0" on:click={toggleDropdown} >
+    <label tabindex="0" on:click={toggleDropdown} >
         <div class="{hasFocus ? 'hidden' : 'transition duration-500 ease-out flex items-center'} transition">
             <slot name="dropdown-button" />
         </div>
@@ -30,6 +30,6 @@
         </div>
     </label>
     <div tabindex="0" class="dropdown-content z-[1] mt-2">
-        <slot name="dropdown-content" />
+        <slot />
     </div>
 </div>

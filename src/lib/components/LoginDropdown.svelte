@@ -15,7 +15,7 @@
             </span>
         </div>
 
-        <ul slot="dropdown-content" class="divide-y divide-neutral-800 menu p-0 w-60 rounded-box">
+        <ul class="divide-y divide-neutral-800 menu p-0 w-60 rounded-box">
             <div>
                 <div class="flex justify-center menu-title">
                     <div class="p-1 text-center text-base font-medium text-base-100-content">Log In</div>

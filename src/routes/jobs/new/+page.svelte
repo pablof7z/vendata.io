@@ -18,7 +18,7 @@
 </script>
 
 <div class="flex flex-col gap-8">
-    <div class="flex flex-col divide-y divide-base-300 truncate">
+    <div class="flex flex-col divide-y divide-base-300">
         {#if showNewJobRequest}
             <div class="card">
                 <JobRequestEditor

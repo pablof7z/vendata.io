@@ -2,6 +2,7 @@
 	import { eventUserReference } from "$utils";
 	import type { NDKEvent } from "@nostr-dev-kit/ndk";
     import Time from "svelte-time";
+    import { EventCardDropdownMenu } from "@nostr-dev-kit/ndk-svelte-components";
 
     export let event: NDKEvent;
     export let title: string | undefined = undefined;
@@ -25,15 +26,33 @@
                 <span class="font-normal opacity-50">{eventUserReference(event)}</span>
             </h3>
 
-            <a {href}>
-                <Time
-                    relative={useRelativeTime()}
-                    {timestamp}
-                    class="text-sm whitespace-nowrap"
-                />
-            </a>
+            <div class="flex flex-row gap-2 dropdown dropdown-end text-sm font-normal">
+                <EventCardDropdownMenu {event} />
+                <a {href}>
+                    <Time
+                        relative={useRelativeTime()}
+                        {timestamp}
+                        class="text-sm whitespace-nowrap"
+                    />
+                </a>
+            </div>
         </div>
 
         <slot />
     </div>
 </div>
+
+<style lang="postcss">
+    :global(.event-card--dropdown-menu) {
+        @apply dropdown-content;
+        @apply bg-base-100 p-4 rounded-box;
+    }
+
+    :global(.event-card--dropdown-menu li) {
+        @apply py-1;
+    }
+
+    :global(.event-card--dropdown-menu li svg) {
+        @apply mr-2;
+    }
+</style>
