@@ -17,17 +17,13 @@
     export let suggestedJobRequestInput: NDKDVMRequest | undefined = undefined;
 
     let type: string | undefined;
-    let inputTags: NDKTag[] = [];
+    let inputTags: NDKTag[] = [[]];
     let outputType: string = 'text/plain';
     let amount: number = 1000;
     let params: NDKDvmParam[] = [];
 
     if (suggestedJobRequestInput) {
         inputTags = [ [ suggestedJobRequestInput.id, "job" ] ]
-    }
-
-    $: if (inputTags.length === 0 && type === "65005") {
-        inputTags = [ [ "", "text" ] ];
     }
 
     async function create() {
@@ -49,8 +45,13 @@
         dispatch('created');
 
         await jobRequest.publish();
+    }
 
-        console.log(jobRequest.rawEvent());
+    function cancel() {
+        dispatch('cancel');
+        type = undefined;
+        inputTags = [[]];
+        if (suggestedJobRequestInput) inputTags = [ [ suggestedJobRequestInput.id, "job" ] ];
     }
 
     function addInput() {
@@ -111,7 +112,7 @@
                         <button class="btn btn-ghost btn-xs group-hover:opacity-100 opacity-0 absolute -ml-6 mt-2" title="remove" on:click={() => { removeInput(index) }}>
                             x
                         </button>
-                        <JobRequestEditorInput bind:inputTag={inputTags[index]} {jobs} />
+                        <JobRequestEditorInput bind:inputTag={inputTags[index]} {jobs} kind={parseInt(type)} />
                     </div>
                 {/each}
             </div>
@@ -176,7 +177,7 @@
                 SUBMIT
             </button>
 
-            <button class="btn btn-ghost" on:click={() => {dispatch('cancel'); type = undefined;} }>
+            <button class="btn btn-ghost" on:click={cancel}>
                 Cancel
             </button>
         </div>

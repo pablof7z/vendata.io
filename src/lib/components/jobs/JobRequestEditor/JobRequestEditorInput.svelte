@@ -5,11 +5,10 @@
 
     export let jobs: NDKDVMRequest[] = [];
     export let inputTag: NDKTag | undefined = undefined;
+    export let kind: number;
 
-    console.log(`initializing with`, inputTag)
-
-    let type: string | undefined = inputTag ? inputTag[1] : undefined;
-    let value: string | undefined = inputTag ? inputTag[0] : undefined;
+    let type: string = inputTag ? inputTag[1] : "";
+    let value: string = inputTag ? inputTag[0] : "";
 
     if (type === "job") {
         type = value;
@@ -53,13 +52,23 @@
             inputTag = [ type, 'job' ];
         }
     }
+
+    let selected: string;
+
+    if (type) {
+        selected = type;
+    } else {
+        if (kind === 65005) type = selected = "text";
+        else if (kind === 65002) type = selected = "url";
+        else type = selected = "event";
+    }
 </script>
 
 <div class="flex flex-col gap-2 w-full">
     <select class="select select-bordered" bind:value={type}>
-        <option value="event" selected={type === 'event'}>Nostr Event</option>
-        <option value="url" selected={type === 'url'}>URL</option>
-        <option value="text" selected={type === 'text'}>Text</option>
+        <option value="text" selected={selected === 'text'}>Text</option>
+        <option value="event" selected={selected === 'event'}>Nostr Event</option>
+        <option value="url" selected={selected === 'url'}>URL</option>
 
         {#each jobs as job, i}
             <option value={job.id} selected={value === job.id}>Result of {kindToText(job.kind)} {eventUserReference(job)}...</option>
