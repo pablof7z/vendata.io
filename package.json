@@ -38,7 +38,7 @@
 		"vitest": "^0.31.0"
 	},
 	"dependencies": {
-		"@nostr-dev-kit/ndk": "^0.8.18",
+		"@nostr-dev-kit/ndk": "0.8.18-3",
 		"@nostr-dev-kit/ndk-cache-dexie": "^0.8.18",
 		"@nostr-dev-kit/ndk-cache-redis": "^1.7.0",
 		"@nostr-dev-kit/ndk-svelte": "0.8.18",

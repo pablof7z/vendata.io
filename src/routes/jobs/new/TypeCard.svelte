@@ -10,6 +10,7 @@
         case 65003: bg = "!bg-warning text-warning-content"; break;
         case 65004: bg = "!bg-info text-info-content"; break;
         case 65005: bg = "!bg-accent text-accent-content"; break;
+        case 65006: bg = "!bg-accent2 text-accent-content"; break;
         case 65100: bg = "!bg-neutral text-neutral-content"; break;
     }
 </script>

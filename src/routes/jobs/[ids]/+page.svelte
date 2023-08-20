@@ -43,16 +43,6 @@
     let jobRequest: NDKDVMRequest | undefined;
 
     let showNewJobRequest = false;
-
-    function isTopLevelItem(item: NDKEvent) {
-        const hasJobAsInput = item.getMatchingTags('i').some(input => {
-            return input[2] === 'job';
-        });
-
-        return !hasJobAsInput;
-    }
-
-    $: console.log('jobRequests', $jobRequests);
 </script>
 
 <div class="flex flex-col gap-8">
@@ -67,6 +57,7 @@
                 <JobRequestEditor
                     bind:jobRequest
                     jobs={$jobRequests}
+                    on:created={() => showNewJobRequest = false}
                     on:cancel={() => showNewJobRequest = false}
                 />
             </div>

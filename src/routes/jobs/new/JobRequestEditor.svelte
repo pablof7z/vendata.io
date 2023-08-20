@@ -2,8 +2,11 @@
     import ndk from '$stores/ndk';
 	import NDK, { NDKDVMRequest, type NDKTag, type NostrEvent } from "@nostr-dev-kit/ndk";
     import { createEventDispatcher } from "svelte";
+    import type { NDKDvmParam } from "@nostr-dev-kit/ndk";
 	import JobRequestEditorInput from './JobRequestEditorInput.svelte';
     import JobRequestEditorPayment from './JobRequestEditorPayment.svelte';
+    import JobRequestEditorParameters65002 from './JobRequestEditorParameters65002.svelte';
+    import JobRequestEditorParameters65005 from './JobRequestEditorParameters65005.svelte';
 	import { jobRequestKinds, kindToText } from '$utils';
 	import TypeCard from './TypeCard.svelte';
 
@@ -16,10 +19,11 @@
     let inputTags: NDKTag[] = [[]];
     let outputType: string = 'text/plain';
     let amount: number = 1000;
+    let params: NDKDvmParam[] = [];
 
     async function create() {
         jobRequest = new NDKDVMRequest($ndk as NDK, {
-            kind: parseInt(type),
+            kind: parseInt(type!),
         } as NostrEvent);
 
         for (const inputTag of inputTags) {
@@ -29,9 +33,7 @@
         if (shouldShowOutput)
             jobRequest.output = outputType;
 
-        if (type === '65002') {
-            if (rangeStart && rangeEnd) jobRequest.tags.push([ "param", "range", rangeStart, rangeEnd ]);
-        }
+        params.forEach(param => jobRequest.tags.push([ "param", ...param ]));
 
         if (type === '65005') {
             if (prompt) jobRequest.tags.push([ "param", "prompt", prompt ]);
@@ -42,7 +44,7 @@
 
         dispatch('created');
 
-        await jobRequest.publish();
+        // await jobRequest.publish();
 
         console.log(jobRequest.rawEvent());
     }
@@ -67,7 +69,7 @@
     let rangeEnd: string | undefined;
 </script>
 
-<div class="card-body">
+<div class="card-body flex flex-col gap-8">
     {#if !type}
         <div>
             <h1 class="text-3xl">Choose the job type you would like to run</h1>
@@ -81,58 +83,89 @@
             {/each}
         </div>
     {:else}
-        <div>
-            <h1 class="text-3xl">{kindToText(parseInt(type))}</h1>
-            <div class="divider"></div>
-        </div>
-
-        <h3>
-            Input
-            <button class="btn btn-circle btn-neutral btn-xs ml-2" on:click={addInput}>
-                +
-            </button>
-        </h3>
-
-        {#each inputTags as inputTag, index (index)}
-            <div class="flex flex-row items-center group">
-                <button class="btn btn-ghost btn-xs group-hover:opacity-100 opacity-0 absolute -ml-6" title="remove" on:click={() => { removeInput(index) }}>x</button>
-                <JobRequestEditorInput bind:inputTag={inputTags[index]} {jobs} />
+        <section>
+            <div>
+                <h1 class="text-3xl">{kindToText(parseInt(type))}</h1>
+                <div class="divider"></div>
             </div>
-        {/each}
 
-        {#if shouldShowOutput}
-            <h3>Output</h3>
+            <div class="flex flex-row items-end gap-2 mb-4">
+                <button class="btn btn-circle btn-neutral btn-sm whitespace-nowrap ml-2" on:click={addInput}>
+                    +
+                </button>
+                <div class="flex flex-row gap-2 items-end">
+                    <h3 class="text-base-100-content text-xl">
+                        Input
+                    </h3>
+                    <span class="font-thin text-base opacity-50">
+                        Enter the data you want to be processed
+                    </span>
 
-            <input type="text" class="input input-bordered" placeholder="Desired output (mime type)" bind:value={outputType} />
-        {/if}
-
-        <h3>Parameters</h3>
-
-        {#if type === "65002"}
-            <p>Range (for audio/video)</p>
-            <div class="flex flex-row gap-2">
-                <input type="number" class="input input-bordered" placeholder="Starting second" bind:value={rangeStart} />
-                <input type="number" class="input input-bordered" placeholder="Finishing second" bind:value={rangeEnd} />
+                </div>
             </div>
-        {:else if type === "65005"}
-            <h3>Prompt (optional)</h3>
-            <input type="text" class="input input-bordered" placeholder="" bind:value={prompt} />
-            <h3>Negative prompt (optional)</h3>
-            <input type="text" class="input input-bordered" placeholder="" bind:value={negativePrompt} />
-        {/if}
 
-        <h3>Payment</h3>
+            {#each inputTags as inputTag, index (index)}
+                <div class="flex flex-row items-center group">
+                    <button class="btn btn-ghost btn-xs group-hover:opacity-100 opacity-0 absolute -ml-6" title="remove" on:click={() => { removeInput(index) }}>x</button>
+                    <JobRequestEditorInput bind:inputTag={inputTags[index]} {jobs} />
+                </div>
+            {/each}
+        </section>
 
-        <p>Indicate how much you are willing to pay for this job</p>
+        <section>
+            {#if shouldShowOutput}
+                <div class="flex flex-row gap-2 items-end mb-2">
+                    <h3 class="text-base-100-content text-xl">
+                        Output
+                    </h3>
+                    <span class="font-thin text-base opacity-50">
+                        Specify the desired output format
+                    </span>
 
-        <JobRequestEditorPayment bind:amount />
+                </div>
+
+                <input type="text" class="input input-bordered" placeholder="Desired output (mime type)" bind:value={outputType} />
+            {/if}
+        </section>
+
+        <section>
+            <div class="flex flex-row gap-2 items-end mb-2">
+                <h3 class="text-base-100-content text-xl">
+                    Parameters
+                </h3>
+                <span class="font-thin text-base opacity-50">
+                    Specify any additional parameters
+                </span>
+
+            </div>
+
+            {#if type === "65002"}
+                <JobRequestEditorParameters65002 bind:params />
+            {:else if type === "65005"}
+                <JobRequestEditorParameters65005 bind:params />
+            {/if}
+
+        </section>
+
+        <section>
+            <div class="flex flex-row gap-2 items-end mb-4">
+                <h3 class="text-base-100-content text-xl">
+                    Payment
+                </h3>
+                <span class="font-thin text-base opacity-50">
+                    Indicate how much you are willing to pay for this job
+                </span>
+            </div>
+
+            <JobRequestEditorPayment bind:amount />
+        </section>
 
         <div class="card-actions">
             <button class="btn btn-primary" on:click={create}>
                 Create
             </button>
 
-            <button class="btn btn-ghost" on:click={() => dispatch('cancel')}>
+            <button class="btn btn-ghost" on:click={() => {dispatch('cancel'); type = undefined;} }>
                 Cancel
             </button>
         </div>
