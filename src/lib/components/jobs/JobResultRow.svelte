@@ -1,11 +1,11 @@
 <script lang="ts">
-	import type { NDKDVMJobFeedback } from "@nostr-dev-kit/ndk";
+	import type { NDKDVMJobResult, NDKTag } from "@nostr-dev-kit/ndk";
     import ndk from "$stores/ndk";
 	import JobStatusLabel from "./JobStatusLabel.svelte";
-	import { EventContent } from "@nostr-dev-kit/ndk-svelte-components";
+	import { Avatar, EventContent, Name, UserCard } from "@nostr-dev-kit/ndk-svelte-components";
 	import Time from "svelte-time/src/Time.svelte";
 
-    export let event: NDKDVMJobFeedback;
+    export let event: NDKDVMJobResult;
 
     const status = event.tagValue("status");
 
@@ -27,6 +27,19 @@
 
         return diff < 1000*60*60*24;
     }
+
+    let decodedContent: NDKTag[] | undefined;
+
+    try {
+        decodedContent = JSON.parse(event.content);
+    } catch (e) {}
+
+    function shouldRestrictResultHeight() {
+        return (
+            !contentIsImageUrl() &&
+            event.jobRequest?.kind !== 65006
+        )
+    }
 </script>
 
 <div class="
@@ -34,12 +47,26 @@
     {event.kind === 65001 ? "text-lg" : ""}
 ">
     <div class="flex-grow overflow-y-auto overflow-x-clip
-        {contentIsImageUrl() ? "" : "max-h-48"}
+        {shouldRestrictResultHeight() ? "max-h-48" : ""}
     ">
         {#if event.kind === 65001 && contentIsImageUrl()}
             <img src={event.content} class="max-h-96" />
         {/if}
-        <EventContent ndk={$ndk} {event} showMedia={true} />
+        {#if event.jobRequest?.kind === 65006}
+            {#if decodedContent}
+                <div class="flex flex-col divide-y divide-y-base-300">
+                    {#each decodedContent as tag}
+                        <div class="flex flex-row gap-4 p-2">
+                            <UserCard ndk={$ndk} pubkey={tag[1]} class="" />
+                        </div>
+                    {/each}
+                </div>
+            {:else}
+                {event.content}
+            {/if}
+        {:else}
+            <EventContent ndk={$ndk} {event} showMedia={true} />
+        {/if}
     </div>
     <div class="w-1/5 self-end text-right">
         <a href="https://nostr.com/{event.encode()}">

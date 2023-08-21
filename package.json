@@ -38,11 +38,11 @@
 		"vitest": "^0.31.0"
 	},
 	"dependencies": {
-		"@nostr-dev-kit/ndk": "0.8.19",
-		"@nostr-dev-kit/ndk-cache-dexie": "^0.8.19",
+		"@nostr-dev-kit/ndk": "0.8.20-1",
+		"@nostr-dev-kit/ndk-cache-dexie": "0.8.20-1",
 		"@nostr-dev-kit/ndk-cache-redis": "^1.7.0",
-		"@nostr-dev-kit/ndk-svelte": "0.8.19",
-		"@nostr-dev-kit/ndk-svelte-components": "0.8.19",
+		"@nostr-dev-kit/ndk-svelte": "0.8.20-1",
+		"@nostr-dev-kit/ndk-svelte-components": "0.8.20-1",
 		"@tailwindcss/typography": "^0.5.9",
 		"daisyui": "^3.5.1",
 		"nostr-tools": "^1.14.0",

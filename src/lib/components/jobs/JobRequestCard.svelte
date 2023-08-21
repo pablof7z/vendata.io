@@ -6,7 +6,8 @@
 	import { onDestroy } from "svelte";
 	import { derived, type Readable, type Writable } from "svelte/store";
 	import JobFeedbackRow from "./JobFeedbackRow.svelte";
-	import type { NDKDVMRequest, NDKTag, NDKEvent } from "@nostr-dev-kit/ndk";
+	import JobResultRow from "./JobResultRow.svelte";
+	import { type NDKDVMRequest, type NDKTag, type NDKEvent, NDKDVMJobResult } from "@nostr-dev-kit/ndk";
 	import DvmCard from "$components/dvms/DvmCard.svelte";
 	import JobRequestEditor from "./JobRequestEditor/JobRequestEditor.svelte";
 
@@ -51,10 +52,14 @@
         }
     }
 
-    const results = $ndk.storeSubscribe<NDKEvent>({
-        kinds: [7, 5, 65000 as number, 65001 as number],
-        ...jobRequest.filter(),
-    } , { closeOnEose: false, groupableDelay: 1000 });
+    const results = $ndk.storeSubscribe<NDKDVMJobResult>(
+        {
+            kinds: [7, 5, 65000 as number, 65001 as number],
+            ...jobRequest.filter(),
+        },
+        { closeOnEose: false, groupableDelay: 1000 },
+        NDKDVMJobResult
+    );
 
     const dependentJobs = $ndk.storeSubscribe<NDKEvent>({
         kinds: jobRequestKinds,
@@ -138,18 +143,22 @@
                     <DvmCard pubkey={dvmPubkey} kind={jobRequest.kind} />
                     <div class="flex flex-col rounded-box bg-base-100 divide-y divide-base-300 gap-4 p-4">
                         {#each events as event (event.id)}
-                            <JobFeedbackRow {event} />
+                            {#if event.kind === 65000}
+                                <JobFeedbackRow {event} />
+                            {:else if event.kind === 65001}
+                                <JobResultRow {event} />
+                            {/if}
                         {/each}
                     </div>
                 </div>
             {/each}
         </div>
-    {:else if $jobResults && $jobResults.length > 0}
-        <!-- <h3 class="font-semibold">Job Results ({$jobResults.length})</h3> -->
-        {#each $jobResults as jobResult (jobResult.id)}
-            <JobFeedbackRow event={jobResult} />
-        {/each}
     {/if}
+    <!-- {#if $jobResults && $jobResults.length > 0}
+        {#each $jobResults as jobResult (jobResult.id)}
+            <JobResultRow event={jobResult} />
+        {/each}
+    {/if} -->
 </EventCard>
 
 {#if showNewJobRequest}
