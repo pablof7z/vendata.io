@@ -143,78 +143,78 @@
         </section>
 
         <div class="join join-vertical">
-        <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-        <details class="collapse collapse-arrow border border-base-300 bg-base-200 join-item">
-            <summary class="collapse-title">
-                <div class="flex flex-row gap-2 items-end">
-                    <h3>
-                        Parameters
-                    </h3>
-                    <span class="font-thin text-base opacity-50">
-                        Specify any additional parameters
-                    </span>
-                </div>
-            </summary>
-
-            <div class="collapse-content">
-                {#if type === "65002"}
-                    <JobRequestEditorParameters65002 bind:params />
-                {:else if type === "65005"}
-                    <JobRequestEditorParameters65005 bind:params />
-                {:else}
-                    <em>No parameters</em>
-                {/if}
-            </div>
-        </details>
-
-        <details class="collapse collapse-arrow border border-base-300 bg-base-200 join-item">
-            <summary class="collapse-title">
-                <div class="flex flex-row gap-2 items-end">
-                    <h3>
-                        Advanced
-                    </h3>
-                </div>
-            </summary>
-
-            <div class="collapse-content">
-                <section>
-                    <div class="flex flex-row gap-2 justify-between mb-2">
-                        <div class="flex flex-col gap-2">
-                            <h3>
-                                Tags
-                            </h3>
-                            <span class="font-thin text-base opacity-80">
-                                Some DVMs use tags to identify the jobs
-                                they can best serve.
-                                <br>
-                                E.g. if this is a bitcoin podcast,
-                                tag it <span class="text-accent font-semibold">bitcoin</span>
-                                for better discoverability.
-                            </span>
-                        </div>
-
-                        <input type="text" class="input input-bordered" placeholder="Desired output (mime type)" bind:value={tTags} />
+            <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+            <details class="collapse collapse-arrow border border-base-300 bg-base-200 join-item">
+                <summary class="collapse-title">
+                    <div class="flex flex-row gap-2 items-end">
+                        <h3>
+                            Parameters
+                        </h3>
+                        <span class="font-thin text-base opacity-50">
+                            Specify any additional parameters
+                        </span>
                     </div>
-                </section>
+                </summary>
 
-                {#if shouldShowOutput}
+                <div class="collapse-content">
+                    {#if type === "65002"}
+                        <JobRequestEditorParameters65002 bind:params />
+                    {:else if type === "65005"}
+                        <JobRequestEditorParameters65005 bind:params />
+                    {:else}
+                        <em>No parameters</em>
+                    {/if}
+                </div>
+            </details>
+
+            <details class="collapse collapse-arrow border border-base-300 bg-base-200 join-item">
+                <summary class="collapse-title">
+                    <div class="flex flex-row gap-2 items-end">
+                        <h3>
+                            Advanced
+                        </h3>
+                    </div>
+                </summary>
+
+                <div class="collapse-content">
                     <section>
                         <div class="flex flex-row gap-2 justify-between mb-2">
                             <div class="flex flex-col gap-2">
                                 <h3>
-                                    Output
+                                    Tags
                                 </h3>
-                                <span class="font-thin text-base opacity-50">
-                                    Specify the desired output format
+                                <span class="font-thin text-base opacity-80">
+                                    Some DVMs use tags to identify the jobs
+                                    they can best serve.
+                                    <br>
+                                    E.g. if this is a bitcoin podcast,
+                                    tag it <span class="text-accent font-semibold">bitcoin</span>
+                                    for better discoverability.
                                 </span>
                             </div>
 
-                            <input type="text" class="input input-bordered" placeholder="Desired output (mime type)" bind:value={outputType} />
+                            <input type="text" class="input input-bordered" placeholder="Desired output (mime type)" bind:value={tTags} />
                         </div>
                     </section>
-                {/if}
-            </div>
-        </details>
+
+                    {#if shouldShowOutput}
+                        <section>
+                            <div class="flex flex-row gap-2 justify-between mb-2">
+                                <div class="flex flex-col gap-2">
+                                    <h3>
+                                        Output
+                                    </h3>
+                                    <span class="font-thin text-base opacity-50">
+                                        Specify the desired output format
+                                    </span>
+                                </div>
+
+                                <input type="text" class="input input-bordered" placeholder="Desired output (mime type)" bind:value={outputType} />
+                            </div>
+                        </section>
+                    {/if}
+                </div>
+            </details>
         </div>
 
         <div class="card-actions">

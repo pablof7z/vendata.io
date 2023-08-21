@@ -1,8 +1,8 @@
 <script lang="ts">
-	import ndk from '$stores/ndk';
+    import ndk from '$stores/ndk';
 	import { jobRequestKinds, kindToText } from '$utils';
 	import { NDKEvent, type NDKUserProfile } from "@nostr-dev-kit/ndk";
-	import { Avatar, EventContent, Name } from '@nostr-dev-kit/ndk-svelte-components';
+	import { Avatar, EventCardDropdownMenu, EventContent, Name } from '@nostr-dev-kit/ndk-svelte-components';
 
     export let dvm: NDKEvent;
 
@@ -32,14 +32,19 @@
 </script>
 
 {#await profilePromise then}
-    <div class="flex flex-row gap-4 w-full card card-compact truncate card-side rounded-box">
-        <figure>
+    <div class="flex flex-row gap-4 w-full truncate rounded-box card card-compact card-side">
+        <figure class="w-1/4">
             <Avatar ndk={$ndk} userProfile={profile} {user} class="w-48 h-full bg-accent2" />
         </figure>
-        <div class="card-body flex flex-col gap-4">
+        <div class="card-body flex flex-col gap-4 w-3/4">
             <div class="flex flex-row gap-4">
-                <div class="flex flex-col gap-2 whitespace-normal">
-                    <Name ndk={$ndk} userProfile={profile} {user} class="text-xl text-base-100-content truncate" />
+                <div class="flex flex-col gap-2 whitespace-normal w-full">
+                    <div class="flex flex-row justify-between dropdown dropdown-end">
+                        <Name ndk={$ndk} userProfile={profile} {user} class="text-xl text-base-100-content truncate font-semibold" />
+                        <EventCardDropdownMenu ndk={$ndk} event={dvm}>
+
+                        </EventCardDropdownMenu>
+                    </div>
                     <span class="text-base">
                         <EventContent
                             ndk={$ndk}
@@ -63,3 +68,18 @@
         </div>
     </div>
 {/await}
+
+<style lang="postcss">
+    :global(.event-card--dropdown-menu) {
+        @apply dropdown-content;
+        @apply bg-base-100 p-4 rounded-box;
+    }
+
+    :global(.event-card--dropdown-menu li) {
+        @apply py-1;
+    }
+
+    :global(.event-card--dropdown-menu li svg) {
+        @apply mr-2;
+    }
+</style>

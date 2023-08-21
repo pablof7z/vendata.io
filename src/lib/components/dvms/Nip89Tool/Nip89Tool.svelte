@@ -4,14 +4,16 @@
 	import { NDKEvent, NDKPrivateKeySigner, type NDKUserProfile, type NostrEvent } from "@nostr-dev-kit/ndk";
     import { nip19 } from "nostr-tools";
 	import ndk from "$stores/ndk";
+	import type { Nip90Param } from "$utils/nip90";
 
     const dispatch = createEventDispatcher();
 
     let name = '';
     let pubkey = '';
     let image = '';
-    let supportedKinds: number[] = [65100];
+    let supportedKind: number;
     let about = '';
+    let nip90Params: Record<string, Nip90Param[]> = {};
 
     let nip89Event: NDKEvent | null;
     let rawEvent: NostrEvent | null;
@@ -20,13 +22,14 @@
         const dvmProfile: NDKUserProfile = {
             name,
             image,
-            about
+            about,
+            nip90Params: nip90Params as any
         }
 
         // check if there is an event we should overwrite
         nip89Event = await $ndk.fetchEvent({
             kinds: [31990 as number],
-            "#k": supportedKinds.map(kind => kind.toString()),
+            "#k": [supportedKind.toString()],
             authors: [pubkey]
         });
 
@@ -40,7 +43,7 @@
         nip89Event.content = JSON.stringify(dvmProfile);
         nip89Event.created_at = Math.floor(Date.now() / 1000);
         nip89Event.removeTag('k');
-        nip89Event.tags.push(...supportedKinds.map(kind => [ 'k', kind.toString() ]));
+        nip89Event.tags.push([ 'k', supportedKind.toString() ]);
         nip89Event.sig = undefined;
 
         await nip89Event.toNostrEvent();
@@ -91,8 +94,9 @@
                 bind:name
                 bind:pubkey
                 bind:image
-                bind:supportedKinds
+                bind:supportedKind
                 bind:about
+                bind:nip90Params
                 on:done={formDone}
                 on:cancel={cancel}
             />
