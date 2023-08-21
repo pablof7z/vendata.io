@@ -31,7 +31,7 @@ if (relays) {
 }
 
 export const defaultRelays = [
-    // 'wss://pablof7z.nostr1.com',
+    'wss://pablof7z.nostr1.com',
     'wss://purplepag.es',
     // 'ws://localhost:8080',
 
