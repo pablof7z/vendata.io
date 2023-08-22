@@ -10,7 +10,7 @@ const $ndk = getStore(ndk);
 export let userJobRequests: NDKEventStore<NDKDVMRequest> | undefined;
 
 export const allJobRequests = $ndk.storeSubscribe<NDKDVMRequest>(
-    { kinds: jobRequestKinds },
+    { kinds: jobRequestKinds, limit: 1 },
     { closeOnEose: false, subId: 'all-job-requests' },
     NDKDVMRequest
 );
@@ -23,7 +23,7 @@ export function initJobRequests() {
     }
 
     userJobRequests = $ndk.storeSubscribe(
-        { kinds: jobRequestKinds, authors: [$currentUser.hexpubkey()] },
+        { kinds: jobRequestKinds, authors: [$currentUser.hexpubkey()], limit: 1 },
         { closeOnEose: false, subId: 'user-job-requests' },
         NDKDVMRequest
     )

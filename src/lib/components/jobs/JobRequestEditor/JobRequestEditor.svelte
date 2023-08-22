@@ -71,13 +71,13 @@
             jobRequest.tags.push([ "param", ...param ]);
         }
 
-        await jobRequest.sign();
-
         if (selectedDvms.length > 0) {
             for (const dvm of selectedDvms) {
                 jobRequest.tag(dvm.author);
             }
         }
+
+        await jobRequest.sign();
 
         dispatch('created');
         await jobRequest.publish();

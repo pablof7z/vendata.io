@@ -66,9 +66,9 @@
                 {/each}
             {/if}
 
-            <button class="btn btn-accent glass">
+            <a class="btn btn-accent glass" href="/dvms/{user.npub}">
                 View DVM
-            </button>
+            </a>
         </div>
     </div>
 {/await}
