@@ -38,7 +38,10 @@
 
 
     <div class="mx-auto flex flex-col gap-4">
-        <h1 class="text-7xl text-center font-black">Data Vending Machines</h1>
+        <h1 class="
+            text-7xl text-center font-black
+            bg-clip-text !text-transparent bg-gradient-to-r from-gradient3 to-gradient4
+        ">Data Vending Machines</h1>
         <div class="text-2xl text-base-100-content font-extralight text-center">
             Programs serving and processing job requests on Nostr.
         </div>
@@ -46,7 +49,7 @@
             Each DVM can support an ever-expanding range of job types.
         </div>
 
-        <button class="btn btn-outline px-8 !rounded-full text-base-100-content self-center" on:click={() => showNip89Tool = !showNip89Tool}>
+        <button class="btn btn-outline btn-accent px-8 !rounded-full text-base-100-content self-center" on:click={() => showNip89Tool = !showNip89Tool}>
             List your DVM with NIP-89
         </button>
     </div>

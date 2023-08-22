@@ -1,6 +1,6 @@
 <script lang="ts">
     import ndk from '$stores/ndk';
-	import type { NDKAppHandlerEvent, NDKEvent, NDKUser, NDKUserProfile } from '@nostr-dev-kit/ndk';
+	import { NDKAppHandlerEvent, type NDKUser, type NDKUserProfile } from '@nostr-dev-kit/ndk';
 	import { Avatar, Name } from '@nostr-dev-kit/ndk-svelte-components';
 	import { Star } from 'phosphor-svelte';
 
@@ -20,15 +20,11 @@
             "#k": [kind.toString()],
             authors: [pubkey]
         }).then((e) => {
-            nip89event = e;
+            if (!e) return resolve(undefined);
 
-            if (nip89event?.content) {
-                try {
-                    profile = JSON.parse(nip89event.content) as unknown as NDKUserProfile;
-                } catch (e) {}
-            }
+            nip89event = NDKAppHandlerEvent.from(e);
 
-            resolve(e);
+            nip89event.fetchProfile().then(resolve);
         });
     });
 </script>

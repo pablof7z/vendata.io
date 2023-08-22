@@ -66,9 +66,18 @@
         if (shouldShowOutput)
             jobRequest.output = outputType;
 
-        params.forEach(param => jobRequest.tags.push([ "param", ...param ]));
+
+        for (const param of params) {
+            jobRequest.tags.push([ "param", ...param ]);
+        }
 
         await jobRequest.sign();
+
+        if (selectedDvms.length > 0) {
+            for (const dvm of selectedDvms) {
+                jobRequest.tag(dvm.author);
+            }
+        }
 
         dispatch('created');
         await jobRequest.publish();
@@ -116,7 +125,7 @@
             {/each}
         </div>
     {:else if requireSelectingDvms && $nip89Events}
-        <SelectDvms dvms={nip89Events} {selectedDvms} />
+        <SelectDvms dvms={nip89Events} bind:selectedDvms />
 
         <div class="card-actions">
             <button class="btn btn-accent !rounded-full btn-outline px-10" on:click={() => {requireSelectingDvms = false}}>
@@ -188,7 +197,11 @@
                         <div class="flex flex-row gap-2 items-end">
                             <h3>
                                 DVMs
-                                ({$nip89Events.length})
+                                {#if selectedDvms.length > 0}
+                                    ({selectedDvms.length} selected)
+                                {:else}
+                                    ({$nip89Events.length})
+                                {/if}
                             </h3>
                             <span class="font-thin text-base opacity-50">
                                 Specify additional parameters
@@ -198,7 +211,18 @@
 
                     <div class="grid grid-flow-col gap-4 collapse-content">
                         {#each $nip89Events as nip89Event (nip89Event.id)}
-                            <DvmTile dvm={nip89Event} />
+                            <DvmTile
+                                dvm={nip89Event}
+                                selected={selectedDvms.includes(nip89Event)}
+                                on:selectionchanged={(selected) => {
+                                    if (selected) {
+                                        selectedDvms.push(nip89Event);
+                                    } else {
+                                        selectedDvms.splice(selectedDvms.indexOf(nip89Event), 1);
+                                    }
+                                    selectedDvms = selectedDvms;
+                                }}
+                            />
                         {/each}
                     </div>
                 </details>
