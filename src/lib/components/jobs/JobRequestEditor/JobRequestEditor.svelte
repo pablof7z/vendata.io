@@ -12,6 +12,8 @@
     import ParamSection from './ParamSection.svelte';
 	import type { NDKEventStore } from '@nostr-dev-kit/ndk-svelte';
     import SelectDvms from './SelectDvms.svelte';
+    import { appHandlers } from "$stores/nip89";
+	import { derived, type Readable } from 'svelte/store';
 
     const dispatch = createEventDispatcher();
 
@@ -31,18 +33,13 @@
         inputTags = [ [ suggestedJobRequestInput.id, "job" ] ]
     }
 
-    let nip89Events: NDKEventStore<NDKAppHandlerEvent> | undefined = undefined;
+    let nip89Events: Readable<NDKAppHandlerEvent[]> | undefined = undefined;
 
     $: if (!nip89Events && type) {
-        nip89Events = $ndk.storeSubscribe({
-            kinds: [ 31990 ],
-            "#k": [type],
-        }, { closeOnEose: true }, NDKAppHandlerEvent);
+        nip89Events = derived(appHandlers, ($appHandlers) => {
+            return $appHandlers.filter(h => !!h.tags.find(t => t[0] === 'k' && t[1] === type));
+        })
     }
-
-    onDestroy(() => {
-        nip89Events?.unsubscribe();
-    });
 
     function parseTTags(tTags: string | undefined): NDKTag[] {
         if (!tTags) return [];
@@ -86,8 +83,6 @@
     function cancel() {
         dispatch('cancel');
         type = undefined;
-        nip89Events?.unsubscribe();
-        nip89Events = undefined;
         inputTags = [[]];
         if (suggestedJobRequestInput) inputTags = [ [ suggestedJobRequestInput.id, "job" ] ];
     }
