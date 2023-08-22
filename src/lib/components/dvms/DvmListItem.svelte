@@ -32,12 +32,12 @@
 </script>
 
 {#await profilePromise then}
-    <div class="flex flex-row gap-4 w-full truncate rounded-box card card-compact card-side">
-        <figure class="w-1/4">
-            <Avatar ndk={$ndk} userProfile={profile} {user} class="w-48 h-full bg-accent2" />
+    <div class="flex flex-row gap-4 w-full truncate card card-compact image-full !rounded-2xl">
+        <figure>
+            <Avatar ndk={$ndk} userProfile={profile} {user} class="h-full bg-accent2" />
         </figure>
-        <div class="card-body flex flex-col gap-4 w-3/4">
-            <div class="flex flex-row gap-4">
+        <div class="card-body flex flex-col gap-4">
+            <div class="flex flex-row gap-4 flex-grow">
                 <div class="flex flex-col gap-2 whitespace-normal w-full">
                     <div class="flex flex-row justify-between dropdown dropdown-end">
                         <Name ndk={$ndk} userProfile={profile} {user} class="text-xl text-base-100-content truncate font-semibold" />
@@ -45,7 +45,7 @@
 
                         </EventCardDropdownMenu>
                     </div>
-                    <span class="text-base">
+                    <div class="text-base max-h-96 overflow-clip overflow-y-auto">
                         <EventContent
                             ndk={$ndk}
                             event={new NDKEvent(undefined, {
@@ -53,7 +53,7 @@
                                 tags: []
                             })}
                         />
-                    </span>
+                    </div>
                 </div>
             </div>
 
@@ -65,6 +65,10 @@
                     {/if}
                 {/each}
             {/if}
+
+            <button class="btn btn-accent glass">
+                View DVM
+            </button>
         </div>
     </div>
 {/await}

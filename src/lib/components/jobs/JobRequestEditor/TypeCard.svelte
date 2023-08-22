@@ -19,6 +19,6 @@
     <div class="card-body text-center items-start justify-stretch">
         <div class="card-title">{kindToText(kind)}</div>
 
-        <p class="text-left">{kindToDescription(kind)}</p>
+        <p class="text-left opacity-80">{kindToDescription(kind)}</p>
     </div>
 </button>

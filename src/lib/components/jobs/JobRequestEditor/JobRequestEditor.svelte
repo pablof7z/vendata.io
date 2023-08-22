@@ -1,15 +1,17 @@
 <script lang="ts">
+	import DvmTile from './DvmTile.svelte';
     import ndk from '$stores/ndk';
 	import NDK, { NDKDVMRequest, type NDKTag, type NostrEvent } from "@nostr-dev-kit/ndk";
-    import { createEventDispatcher } from "svelte";
-    import type { NDKDvmParam } from "@nostr-dev-kit/ndk";
+    import { createEventDispatcher, onDestroy } from "svelte";
+    import { NDKAppHandlerEvent, type NDKDvmParam, type NDKEvent } from "@nostr-dev-kit/ndk";
 	import JobRequestEditorInput from './JobRequestEditorInput.svelte';
     import JobRequestEditorPayment from './JobRequestEditorPayment.svelte';
-    import JobRequestEditorParameters65002 from './JobRequestEditorParameters65002.svelte';
-    import JobRequestEditorParameters65005 from './JobRequestEditorParameters65005.svelte';
 	import { jobRequestKinds, kindToDescription, kindToText } from '$utils';
 	import TypeCard from './TypeCard.svelte';
-	import { PaperPlaneTilt } from 'phosphor-svelte';
+	import { ArrowFatRight, PaperPlaneTilt } from 'phosphor-svelte';
+    import ParamSection from './ParamSection.svelte';
+	import type { NDKEventStore } from '@nostr-dev-kit/ndk-svelte';
+    import SelectDvms from './SelectDvms.svelte';
 
     const dispatch = createEventDispatcher();
 
@@ -23,10 +25,24 @@
     let amount: number = 1000;
     let params: NDKDvmParam[] = [];
     let tTags: string | undefined;
+    let selectedDvms: NDKAppHandlerEvent[] = [];
 
     if (suggestedJobRequestInput) {
         inputTags = [ [ suggestedJobRequestInput.id, "job" ] ]
     }
+
+    let nip89Events: NDKEventStore<NDKAppHandlerEvent> | undefined = undefined;
+
+    $: if (!nip89Events && type) {
+        nip89Events = $ndk.storeSubscribe({
+            kinds: [ 31990 ],
+            "#k": [type],
+        }, { closeOnEose: true }, NDKAppHandlerEvent);
+    }
+
+    onDestroy(() => {
+        nip89Events?.unsubscribe();
+    });
 
     function parseTTags(tTags: string | undefined): NDKTag[] {
         if (!tTags) return [];
@@ -61,6 +77,8 @@
     function cancel() {
         dispatch('cancel');
         type = undefined;
+        nip89Events?.unsubscribe();
+        nip89Events = undefined;
         inputTags = [[]];
         if (suggestedJobRequestInput) inputTags = [ [ suggestedJobRequestInput.id, "job" ] ];
     }
@@ -76,20 +94,39 @@
     }
 
     let shouldShowOutput = true;
-    $: shouldShowOutput = type !== '65005';
+    $: shouldShowOutput = type === '65005';
+
+    /**
+     * Require selecting DVMs before moving on to show the
+     * Job form
+     */
+    let requireSelectingDvms = false;
+
+    $: requireSelectingDvms = type === '65006';
 </script>
 
 <div class="card-body flex flex-col gap-8">
     {#if !type}
-        <div>
-            <h1 class="text-3xl border-b border-b-base-300 pb-4">Choose the job type you would like to run</h1>
-        </div>
+        <h1 class="text-3xl border-b border-b-base-300 pb-4">Choose the job type you would like to run</h1>
 
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 flex-wrap gap-4 justify-start">
 
             {#each jobRequestKinds as kind}
                 <TypeCard {kind} on:click={() => { type = kind.toString() }} />
             {/each}
+        </div>
+    {:else if requireSelectingDvms && $nip89Events}
+        <SelectDvms dvms={nip89Events} {selectedDvms} />
+
+        <div class="card-actions">
+            <button class="btn btn-accent !rounded-full btn-outline px-10" on:click={() => {requireSelectingDvms = false}}>
+                CONTINUE
+                <ArrowFatRight class="ml-2" />
+            </button>
+
+            <button class="btn btn-ghost" on:click={cancel}>
+                Cancel
+            </button>
         </div>
     {:else}
         <div class="flex flex-row gap-2 items-end whitespace-nowrap border-b border-b-base-300 pb-4">
@@ -143,29 +180,29 @@
         </section>
 
         <div class="join join-vertical">
-            <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-            <details class="collapse collapse-arrow border border-base-300 bg-base-200 join-item">
-                <summary class="collapse-title">
-                    <div class="flex flex-row gap-2 items-end">
-                        <h3>
-                            Parameters
-                        </h3>
-                        <span class="font-thin text-base opacity-50">
-                            Specify any additional parameters
-                        </span>
-                    </div>
-                </summary>
+            <ParamSection kind={parseInt(type)} bind:params nip89Events={$nip89Events} />
 
-                <div class="collapse-content">
-                    {#if type === "65002"}
-                        <JobRequestEditorParameters65002 bind:params />
-                    {:else if type === "65005"}
-                        <JobRequestEditorParameters65005 bind:params />
-                    {:else}
-                        <em>No parameters</em>
-                    {/if}
-                </div>
-            </details>
+            {#if $nip89Events && $nip89Events.length > 0}
+                <details class="collapse collapse-arrow border border-base-300 bg-base-200 join-item">
+                    <summary class="collapse-title">
+                        <div class="flex flex-row gap-2 items-end">
+                            <h3>
+                                DVMs
+                                ({$nip89Events.length})
+                            </h3>
+                            <span class="font-thin text-base opacity-50">
+                                Specify additional parameters
+                            </span>
+                        </div>
+                    </summary>
+
+                    <div class="grid grid-flow-col gap-4 collapse-content">
+                        {#each $nip89Events as nip89Event (nip89Event.id)}
+                            <DvmTile dvm={nip89Event} />
+                        {/each}
+                    </div>
+                </details>
+            {/if}
 
             <details class="collapse collapse-arrow border border-base-300 bg-base-200 join-item">
                 <summary class="collapse-title">
@@ -193,7 +230,7 @@
                                 </span>
                             </div>
 
-                            <input type="text" class="input input-bordered" placeholder="Desired output (mime type)" bind:value={tTags} />
+                            <input kind="text" class="input input-bordered" placeholder="Desired output (mime kind)" bind:value={tTags} />
                         </div>
                     </section>
 
@@ -209,7 +246,7 @@
                                     </span>
                                 </div>
 
-                                <input type="text" class="input input-bordered" placeholder="Desired output (mime type)" bind:value={outputType} />
+                                <input kind="text" class="input input-bordered" placeholder="Desired output (mime kind)" bind:value={outputType} />
                             </div>
                         </section>
                     {/if}

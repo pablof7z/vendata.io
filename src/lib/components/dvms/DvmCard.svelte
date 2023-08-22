@@ -1,21 +1,19 @@
 <script lang="ts">
     import ndk from '$stores/ndk';
-	import type { NDKEvent, NDKUser, NDKUserProfile } from '@nostr-dev-kit/ndk';
+	import type { NDKAppHandlerEvent, NDKEvent, NDKUser, NDKUserProfile } from '@nostr-dev-kit/ndk';
 	import { Avatar, Name } from '@nostr-dev-kit/ndk-svelte-components';
 	import { Star } from 'phosphor-svelte';
-    import {openModal} from "svelte-modals";
-    import Nip89RecommendModal from "$modals/Nip89RecommendModal.svelte";
 
-    export let pubkey: string;
-    export let kind: number;
-    export let nip89event: NDKEvent | null | undefined = undefined;
+    export let pubkey: string | undefined = undefined;
+    export let kind: number | undefined = undefined;
+    export let nip89event: NDKAppHandlerEvent | null | undefined = undefined;
     export let profile: NDKUserProfile | undefined = undefined;
     export let user: NDKUser | undefined = undefined;
 
     if (!user) user = $ndk.getUser({hexpubkey: pubkey});
 
     const promise = new Promise((resolve) => {
-        if (nip89event) return resolve(nip89event);
+        if (nip89event) return nip89event.fetchProfile().then(resolve);
 
         $ndk.fetchEvent({
             kinds: [31990 as number],
@@ -36,10 +34,10 @@
 </script>
 
 {#await promise}
-{:then}
+{:then profile}
     <div class="w-full card card-compact">
         <div class="card-body flex flex-row gap-4 whitespace-normal">
-            <Avatar ndk={$ndk} bind:userProfile={profile} {user} class="w-24 h-24 object-cover rounded-lg" />
+            <Avatar ndk={$ndk} userProfile={profile} {user} class="w-24 h-24 object-cover rounded-lg" />
             <div class="flex flex-row gap-4">
                 <div class="flex flex-col gap-2 whitespace-normal">
                     <div class="flex flex-row gap-2 items-center w-full justify-between">
