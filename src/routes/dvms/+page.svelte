@@ -5,15 +5,11 @@
     import ndk from '$stores/ndk';
 	import { jobRequestKinds } from '$utils';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
-
-    const dvms = $ndk.storeSubscribe<NDKEvent>({
-        kinds: [31990 as number],
-        "#k": jobRequestKinds.map(j => j.toString())
-    });
+    import { appHandlers } from "$stores/nip89";
 
     const dvmPubkeys = new Set<string>();
 
-    $: $dvms.forEach(dvm => dvmPubkeys.add(dvm.pubkey));
+    $: $appHandlers.forEach(dvm => dvmPubkeys.add(dvm.pubkey));
 
     const unannouncedDvms = $ndk.storeSubscribe<NDKEvent>({
         kinds: [65001]
@@ -58,7 +54,7 @@
         <Nip89Tool on:cancel={() => showNip89Tool = false} on:done={() => showNip89Tool = false} />
     {:else}
         <div class="grid grid-cols-3 gap-4 mt-10">
-            {#each $dvms as dvm (dvm.id)}
+            {#each $appHandlers as dvm (dvm.id)}
                 <DvmListItem {dvm} />
             {/each}
         </div>

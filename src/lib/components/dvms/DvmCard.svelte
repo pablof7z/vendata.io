@@ -35,7 +35,7 @@
         <div class="card-body flex flex-row gap-4 whitespace-normal">
             <Avatar ndk={$ndk} userProfile={profile} {user} class="w-24 h-24 object-cover rounded-lg" />
             <div class="flex flex-row gap-4">
-                <div class="flex flex-col gap-2 whitespace-normal">
+                <div class="flex flex-col gap-2 whitespace-normal w-full">
                     <div class="flex flex-row gap-2 items-center w-full justify-between">
                         <Name ndk={$ndk} userProfile={profile} {user} class="text-xl text-base-100-content truncate" />
 
