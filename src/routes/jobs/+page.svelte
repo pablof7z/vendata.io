@@ -1,8 +1,20 @@
 <script lang="ts">
-	import type { NDKEvent } from '@nostr-dev-kit/ndk';
-    import { allJobRequests } from '$stores/jobRequests';
+	import { NDKDVMRequest, type NDKEvent } from '@nostr-dev-kit/ndk';
 	import JobRequestCard from '$components/jobs/JobRequestCard.svelte';
+    import ndk from '$stores/ndk';
 	import { derived } from 'svelte/store';
+	import { jobRequestKinds } from '$utils';
+	import { onDestroy } from 'svelte';
+
+    const allJobRequests = $ndk.storeSubscribe<NDKDVMRequest>(
+        { kinds: jobRequestKinds, limit: 20 },
+        { closeOnEose: false, subId: 'all-job-requests' },
+        NDKDVMRequest
+    );
+
+    onDestroy(() => {
+        allJobRequests.unsubscribe();
+    })
 
     function isTopLevelItem(item: NDKEvent) {
         const hasJobAsInput = item.getMatchingTags('i').some(input => {

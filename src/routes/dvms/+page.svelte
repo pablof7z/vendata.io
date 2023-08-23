@@ -1,9 +1,7 @@
 <script lang="ts">
 	import DvmListItem from '$components/dvms/DvmListItem.svelte';
 	import Nip89Tool from '$components/dvms/Nip89Tool/Nip89Tool.svelte';
-	import Logo from '$icons/Logo.svelte';
     import ndk from '$stores/ndk';
-	import { jobRequestKinds } from '$utils';
 	import type { NDKEvent } from '@nostr-dev-kit/ndk';
     import { appHandlers } from "$stores/nip89";
 
@@ -67,9 +65,6 @@
                 Unannounced DVMs
             </h1>
             <h2 class="text-center leading-loose">These are DVMs that have been seen acting in the wild but that have not create a NIP-89 record.</h2>
-            <button class="btn btn-outline px-8 !rounded-full text-base-100-content self-center" on:click={() => showNip89Tool = !showNip89Tool}>
-                List your DVM with NIP-89
-            </button>
         </div>
 
         <button class="btn btn-ghost btn-outline btn-lg self-center"

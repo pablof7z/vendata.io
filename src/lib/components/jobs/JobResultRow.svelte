@@ -4,8 +4,11 @@
 	import JobStatusLabel from "./JobStatusLabel.svelte";
 	import { Avatar, EventContent, Name, UserCard } from "@nostr-dev-kit/ndk-svelte-components";
 	import Time from "svelte-time/src/Time.svelte";
+	import { onMount } from "svelte";
+	import { markEventAsSeen } from "$stores/notifications";
 
     export let event: NDKDVMJobResult;
+    export let dontMarkAsSeen: boolean = false;
 
     const status = event.tagValue("status");
 
@@ -40,6 +43,10 @@
             event.jobRequest?.kind !== 65006
         )
     }
+
+    onMount(() => {
+        if (!dontMarkAsSeen) markEventAsSeen(event.id);
+    })
 </script>
 
 <div class="
@@ -57,7 +64,15 @@
                 <div class="flex flex-col divide-y divide-y-base-300">
                     {#each decodedContent as tag}
                         <div class="flex flex-row gap-4 p-2">
-                            <UserCard ndk={$ndk} pubkey={tag[1]} class="" />
+                            {#if tag[0] === "p"}
+                                <UserCard ndk={$ndk} pubkey={tag[1]} class="" />
+                            {:else if tag[0] === "e"}
+                                {#await $ndk.fetchEvent(tag[1]) then event}
+                                    <EventContent ndk={$ndk} {event} showMedia={true} />
+                                {/await}
+                            {:else}
+                                {tag[1]}
+                            {/if}
                         </div>
                     {/each}
                 </div>

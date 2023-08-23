@@ -4,8 +4,11 @@
 	import JobStatusLabel from "./JobStatusLabel.svelte";
 	import { EventContent } from "@nostr-dev-kit/ndk-svelte-components";
 	import Time from "svelte-time/src/Time.svelte";
+	import { onMount } from "svelte";
+	import { markEventAsSeen } from "$stores/notifications";
 
     export let event: NDKDVMJobFeedback;
+    export let dontMarkAsSeen: boolean = false;
 
     const status = event.tagValue("status");
 
@@ -27,6 +30,10 @@
 
         return diff < 1000*60*60*24;
     }
+
+    onMount(() => {
+        if (!dontMarkAsSeen) markEventAsSeen(event.id);
+    })
 </script>
 
 <div class="

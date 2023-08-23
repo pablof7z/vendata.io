@@ -4,9 +4,13 @@
     import {currentUser} from '$stores/current-user';
 	import { page } from "$app/stores";
     import CurrentUser from "./CurrentUser.svelte";
+	import { GitPullRequest, MagicWand, Rss, Sparkle } from "phosphor-svelte";
+    import { notificationsEnabled } from '$stores/notifications';
+	import { userTaggedEvents } from "$stores/jobRequests";
+    import NotificationButton from "./NotificationButton.svelte";
 </script>
 
-<div class="navbar bg-base-100 mb-8 px-8">
+<div class="navbar bg-base-100 mb-2 px-8">
     <div class="navbar-start">
         <div class="dropdown">
         <label tabindex="0" class="btn btn-ghost lg:hidden">
@@ -35,20 +39,36 @@
             VENDATA
         </h1>
     </a>
-    </div>
+</div>
 
-    <div class="navbar-center hidden lg:flex">
+    <div class="navbar-center hidden lg:flex flex-row gap-8">
+        <ul class="menu menu-horizontal !bg-transparent">
+            <li><a
+                class:tab-active={$page.url.pathname === "/magic"}
+                class="" href="/magic">
+                    <MagicWand class="w-6 h-6 mr-2" />
+                Magic</a></li>
+        </ul>
+
         <ul class="menu menu-horizontal">
             <li><a
                 class:tab-active={$page.url.pathname === "/jobs"}
-                class="" href="/jobs">Job Request Feed</a></li>
+                class="" href="/jobs">
+                    <Rss class="w-6 h-6 mr-2" />
+                Job Request Feed</a></li>
             <li><a
                 class:tab-active={$page.url.pathname === "/dvms"}
-                class="" href="/dvms">List DVMs</a></li>
+                class="" href="/dvms">
+                    <Sparkle class="w-6 h-6 mr-2" />
+                    Data Vending Machines
+                </a></li>
             {#if $currentUser}
                 <li><a
                     class:tab-active={$page.url.pathname === "/jobs/my"}
-                    class="" href="/jobs/my">Your Jobs</a></li>
+                    class="" href="/jobs/my">
+                    <GitPullRequest class="w-6 h-6 mr-2" />
+                    Your Jobs
+                </a></li>
             {/if}
         </ul>
 
@@ -57,7 +77,11 @@
         </a>
 
     </div>
-    <div class="navbar-end">
+    <div class="navbar-end flex flex-row items-center gap-4">
+        {#if $notificationsEnabled}
+            <NotificationButton />
+        {/if}
+
         <CurrentUser />
     </div>
 </div>

@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { allJobRequests, initJobRequests, userJobRequests } from '$stores/jobRequests';
+	import { userTaggedEvents } from '$stores/jobRequests';
+	import { initJobRequests, userJobRequests } from '$stores/jobRequests';
 	import ndk from '$stores/ndk';
 	import { onMount } from 'svelte';
 	import '../app.postcss';
@@ -8,6 +9,9 @@
 	import Navbar from '$components/Navbar.svelte';
 	import { Modals, closeModal } from 'svelte-modals'
 	import { fade } from 'svelte/transition';
+	import { initNotifications } from '$stores/notifications';
+	import { GitPullRequest, Rss, Sparkle } from 'phosphor-svelte';
+	import { page } from '$app/stores';
 
 	onMount(async () => {
         try {
@@ -32,7 +36,9 @@
 	}
 
 	$: if ($currentUser && !$userJobRequests) {
+		console.log(`init`);
 		initJobRequests();
+		initNotifications();
 	}
 </script>
 
@@ -45,6 +51,7 @@
         on:click={closeModal}
         transition:fade={{ duration: 100 }}></div>
 </Modals>
+
 <div class="mx-auto">
 	<slot />
 </div>

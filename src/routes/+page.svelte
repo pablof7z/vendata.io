@@ -1,42 +1,135 @@
 <script lang="ts">
+	import DvmListItem from '$components/dvms/DvmListItem.svelte';
+	import JobRequestEditor from '$components/jobs/JobRequestEditor/JobRequestEditor.svelte';
 	import Logo from '$icons/Logo.svelte';
-	import { allJobRequests } from '$stores/jobRequests';
+	import { appHandlers } from '$stores/nip89';
 </script>
 
-<div class="bg-gray-900">
-    <div class="relative isolate overflow-hidden pt-14">
-      <img src="https://cdn.midjourney.com/bd588aed-e734-4043-99b3-352ee973de24/0_3.png" alt="" class="absolute inset-0 -z-10 h-full w-full object-cover opacity-20">
-      <div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80" aria-hidden="true">
-        <div class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-20 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]" style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"></div>
-      </div>
-      <div class="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
-        <div class="text-center flex flex-col items-center gap-4">
-            <Logo />
-          <h1 class="text-4xl font-black tracking-tight text-white sm:text-7xl">VENDATA</h1>
-          <p class="text-xl leading-8 text-gray-300">Explore and interact with unstoppable Data Vending Machines over Nostr</p>
-          <div class="mt-10 flex items-center justify-center gap-x-6">
-            <a href="/jobs" class="btn btn-primary btn-wide btn-lg !rounded-full">Get Started</a>
-          </div>
+
+<div class="flex flex-col gap-12">
+    <section class="h-[50vh] flex flex-row gap-8 items-center justify-center mx-auto">
+        <img src="https://cdn.midjourney.com/bd588aed-e734-4043-99b3-352ee973de24/0_3.png" alt="" class="h-full rounded-box">
+
+        <div class="flex flex-col items-start w-1/2">
+            <h1 class="text-8xl font-extrabold tracking-wider">
+                <span class="bg">Money in,</span>
+                <br>
+                <span class="bg">Data out</span>
+            </h1>
+
+            <h2 class="text-base-100-content text-3xl font-thin">
+                The freest market of data-processing AIs in the world
+            </h2>
         </div>
-      </div>
-    </div>
-</div>
+    </section>
 
-<div class="bg-base-100 px-6 py-32 lg:px-8">
-  <div class="mx-auto max-w-3xl text-base-300-content leading-7">
-    <p class="text-base font-semibold leading-7 text-accent">Introducing</p>
-    <h1 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">Data Vending Machines</h1>
-    <p class="mt-6 text-xl leading-8">Aliquet nec orci mattis amet quisque ullamcorper neque, nibh sem. At arcu, sit dui mi, nibh dui, diam eget aliquam. Quisque id at vitae feugiat egestas ac. Diam nulla orci at in viverra scelerisque eget. Eleifend egestas fringilla sapien.</p>
-    <div class="mt-10 max-w-2xl">
-      <p>Faucibus commodo massa rhoncus, volutpat. Dignissim sed eget risus enim. Mattis mauris semper sed amet vitae sed turpis id. Id dolor praesent donec est. Odio penatibus risus viverra tellus varius sit neque erat velit. Faucibus commodo massa rhoncus, volutpat. Dignissim sed eget risus enim. Mattis mauris semper sed amet vitae sed turpis id.</p>
-    </div>
-  </div>
-</div>
+    <section class="flex flex-col gap-8">
+        <h1 class="text-5xl font-black text-center flex flex-col items-center gap-4">
+            <div class="text-3xl opacity-80 font-bold">Meet your</div>
+            <span class="bg">
+                Data Vending Machine
+            </span>
+        </h1>
 
+        <div class="flex flex-row gap-8 px-4 relative mx-auto">
+
+            <div class="w-2/3 text-base-300-content p-8 rounded-box text-lg prose">
+                <div class="sticky top-20">
+                    <h1 class="text-3xl font-bold">
+                        What are Data Vending Machines?
+                    </h1>
+
+                    <p>
+                        Data Vending Machines are data-processing tools. You give them some data,
+                        a few sats, and they give you back some data.
+                    </p>
+
+                    <p>
+                        The magic of DVMs comes from a few key properties:
+                    </p>
+
+                    <div class="grid grid-flow-row gap-8 not-prose">
+                        <div class="grid grid-cols-2 gap-6">
+                            <div class="card card-compact !rounded-xl">
+                                <div class="card-body">
+                                    <span class="block text-2xl font-bold text-accent2">Discoverable</span>
+                                    <p class="text-lg">
+                                        Jobs don't need to be specifically directed to any DVM;
+                                        users simply request a certain job to be done and available
+                                        DVMs pick it up.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="card card-compact !rounded-xl">
+                                <div class="card-body">
+                                    <span class="block text-2xl font-bold text-accent2">Composable</span>
+                                    <p class="text-lg">
+                                        Jobs don't need to be specifically directed to any DVM;
+                                        users simply request a certain job to be done and available
+                                        DVMs pick it up.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card card-compact !rounded-xl">
+                            <div class="card-body">
+                                <span class="block text-2xl font-bold text-accent2">Ruthless Competition</span>
+                                <p class="text-lg">
+                                    The fact that there is no registration, no signups or approvals,
+                                    the fact
+                                    <span class="text-base-100-content">
+                                        that
+                                        <mark>anyone can create a DVM</mark> and immediately monetize it
+                                    with zero-intermediaries
+                                    </span>, in an ever-growing marketplace that is
+                                    beaming with new users coming from all types of use cases in mind,
+                                    means that the DVM market is the freest market of data-processing
+                                    AIs in the world.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-1/3">
+                <div class="grid grid-cols-1 gap-4 max-w-5xl mx-auto w-96">
+                    {#each $appHandlers as dvm (dvm.id)}
+                        <DvmListItem {dvm} />
+                    {/each}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="max-w-5xl mx-auto relative">
+        <div class="flex absolute top-0 left-0 w-full h-full items-center justify-center text-base-100-content z-50">
+
+        </div>
+        <div class="card opacity-20">
+            <JobRequestEditor
+            />
+        </div>
+    </section>
+
+    <section class="hero flex flex-col gap-8 h-screen">
+        <h1 class="text-8xl font-extrabold tracking-wider text-center">
+            <span class="bg">Money in,</span>
+            <br>
+            <span class="bg">Data out</span>
+        </h1>
+
+        <h2 class="text-base-100-content text-4xl font-bold">
+            Data Vending Machines
+        </h2>
+    </section>
+</div>
 
 <style>
     h1 span.bg {
-        background: radial-gradient(17397.30% 100% at 9.07% -0%, #FFF 0%, #817EFF 100%);
+        background: linear-gradient(50deg, #FFF 0%, #817EFF 100%);
         background-clip: text;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;

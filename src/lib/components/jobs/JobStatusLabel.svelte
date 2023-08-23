@@ -4,6 +4,8 @@
 
     export let event: NDKEvent | undefined = undefined;
     export let status: string | undefined = undefined;
+
+    if (!status && event) status = event.tagValue("status");
 </script>
 
 {#if status === 'success'}
