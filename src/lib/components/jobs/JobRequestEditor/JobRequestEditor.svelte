@@ -98,7 +98,7 @@
     }
 
     let shouldShowOutput = true;
-    $: shouldShowOutput = type === '65005';
+    $: shouldShowOutput = type !== '65005';
 
     /**
      * Require selecting DVMs before moving on to show the
@@ -215,7 +215,7 @@
                     </div>
                 </summary>
 
-                <div class="collapse-content">
+                <div class="collapse-content flex flex-col gap-4 divide-y divide-base-300">
                     <section>
                         <div class="flex flex-row gap-4 justify-between">
                             <div class="flex flex-col gap-2">
@@ -298,5 +298,9 @@
 
     :global(section h3, details h3) {
         @apply text-xl;
+    }
+
+    :global(.divide-y section:not(:first-child)) {
+        @apply pt-4;
     }
 </style>
