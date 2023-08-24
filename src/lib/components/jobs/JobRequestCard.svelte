@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { jobRequestKinds, kindToText } from "$utils";
+	import { eventUserReference, jobRequestKinds, kindToText } from "$utils";
 	import EventCard from "./EventCard.svelte";
 	import { nip19 } from "nostr-tools";
 	import ndk from "$stores/ndk";
@@ -7,9 +7,16 @@
 	import { derived, type Readable, type Writable } from "svelte/store";
 	import JobFeedbackRow from "./JobFeedbackRow.svelte";
 	import JobResultRow from "./JobResultRow.svelte";
-	import { type NDKDVMRequest, type NDKTag, type NDKEvent, NDKDVMJobResult } from "@nostr-dev-kit/ndk";
+	import { type NDKDVMRequest, type NDKTag, type NDKEvent, NDKDVMJobResult, NDKKind, NDKDVMJobFeedback } from "@nostr-dev-kit/ndk";
 	import DvmCard from "$components/dvms/DvmCard.svelte";
 	import JobRequestEditor from "./JobRequestEditor/JobRequestEditor.svelte";
+	import { Avatar, Name } from "@nostr-dev-kit/ndk-svelte-components";
+	import JobTypeIcon from "./JobTypeIcon.svelte";
+	import { Plus } from "phosphor-svelte";
+	import { slide } from "svelte/transition";
+	import JobRequestEditorModal from "$modals/JobRequestEditorModal.svelte";
+	import { openModal } from "svelte-modals";
+	import JobRequestCardDvmCard from "./JobRequestCardDvmCard.svelte";
 
     export let jobRequest: NDKDVMRequest;
     export let compact = false;
@@ -23,8 +30,6 @@
 
         relatedJobRequests = relatedJobRequests;
     }
-
-    const jobRequestType = kindToText(jobRequest.kind!);
 
     let inputs: NDKTag[] = [];
 
@@ -75,7 +80,7 @@
         dependentJobs.unsubscribe();
     });
 
-    let dvms: Record<string, NDKEvent[]> = {};
+    let dvms: Record<string, (NDKDVMJobFeedback | NDKDVMJobResult)[]> = {};
 
     $: if ($relatedJobRequests && $dependentJobs.length > 0) {
         relatedJobRequests.update((tree) => {
@@ -94,23 +99,49 @@
         const alreadyAdded = (dvms[key].some(e => e.id === result.id));
 
         if (!alreadyAdded) {
-            dvms[key].push(result);
+            let mappedEvent;
+
+            if (result.kind === NDKKind.DVMJobFeedback)
+                mappedEvent = NDKDVMJobFeedback.from(result)
+            else if (result.kind === NDKKind.DVMJobResult)
+                mappedEvent = NDKDVMJobResult.from(result);
+
+            dvms[key].push(mappedEvent);
             dvms = dvms;
         }
     }
 
-    let showNewJobRequest = false;
     let shouldShowJobFeedback = false;
 
     $: shouldShowJobFeedback = !compact;// && ($jobResults && $jobResults.length === 0);
+    let addJobHover = false;
+    let cardHover = false;
 </script>
 
-<EventCard event={jobRequest} title={jobRequestType} href={`/jobs/${jobRequest.encode()}`}>
+<EventCard
+    event={jobRequest}
+    href={`/jobs/${jobRequest.encode()}`}
+    on:mouseover={() => cardHover = true}
+    on:mouseout={() => cardHover = false}
+>
+    <div class="flex flex-row items-center gap-4 text-base-100-content" slot="header">
+        <div class="flex flex-row items-center gap-2 font-normal text-sm">
+            <Avatar ndk={$ndk} pubkey={jobRequest.pubkey} class="w-8 h-8 rounded-full" />
+            <div class="flex flex-row items-center gap-1">
+                <span class="truncate max-w-xs inline-block">
+                    <Name ndk={$ndk} pubkey={jobRequest.pubkey} class="font-semibold" />
+                </span>
+                requested
+            </div>
+            <JobTypeIcon kind={jobRequest.kind} />
+        </div>
+    </div>
+
     <div class="whitespace-normal flex flex-col gap-2">
         {#each inputs as input}
             <div class="flex flex-row items-center gap-2">
                 <h3 class="font-semibold">
-                    <span class="text-accent text-lg">INPUT</span>
+                    <span class="text-lg">INPUT</span>
                     {#if input[2]}
                         <span class="font-normal opacity-50">({input[2]})</span>
                     {/if}
@@ -132,49 +163,58 @@
         {/each}
     </div>
 
-    {#if !compact && shouldShowJobFeedback}
-        {#if Object.keys(dvms).length === 0}
-            <h3 class="font-semibold">DVMs ({Object.keys(dvms).length})</h3>
-        {/if}
-
-        <div class="flex flex-col gap-8 divide-y divide-base-300">
-            {#each Object.entries(dvms) as [dvmPubkey, events]}
-                <div class="flex flex-col gap-2">
-                    <DvmCard pubkey={dvmPubkey} kind={jobRequest.kind} />
-                    <div class="flex flex-col rounded-box bg-base-100 divide-y divide-base-300 gap-4 p-4">
-                        {#each events as event (event.id)}
-                            {#if event.kind === 65000}
-                                <JobFeedbackRow {event} />
-                            {:else if event.kind === 65001}
-                                <JobResultRow {event} />
-                            {/if}
-                        {/each}
-                    </div>
-                </div>
-            {/each}
-        </div>
-    {/if}
     <!-- {#if $jobResults && $jobResults.length > 0}
         {#each $jobResults as jobResult (jobResult.id)}
             <JobResultRow event={jobResult} />
         {/each}
     {/if} -->
+
+    {#if cardHover || true}
+        <div class="
+        ">
+            <button
+                class="
+                    btn inline-block !rounded-full btn-normal !bg-base-300 group w-fit flex flex-row items-center
+                    hover:bg-gradient-to-r from-gradient3 to-gradient4
+                    hover:text-white
+                    transition-all duration-200
+                    font-normal
+                    p-1 hover:px-4
+                    min-w-[32px]
+                    btn-sm
+                "
+                on:mouseover={() => addJobHover = true}
+                on:mouseout={() => addJobHover = false}
+                on:click={() => {
+                    openModal(JobRequestEditorModal, {
+                        suggestedJobRequestInput: jobRequest,
+                        jobs: [...$dependentJobs, jobRequest],
+                    })
+                }}
+            >
+                <Plus size="1rem" />
+                {#if addJobHover}
+                    <span class="whitespace-nowrap line-clamp-1" transition:slide|local={{ axis: 'x' }}>
+                        Add job
+                    </span>
+                {/if}
+            </button>
+        </div>
+    {/if}
 </EventCard>
 
-{#if showNewJobRequest}
-    <div class="card">
-        <JobRequestEditor
-            bind:jobRequest
-            jobs={[jobRequest]}
-            on:created={() => showNewJobRequest = false}
-            on:cancel={() => showNewJobRequest = false}
-        />
+{#if shouldShowJobFeedback}
+    <div class="ml-10">
+        <div class="flex flex-col gap-8 divide-y divide-base-300">
+            {#each Object.entries(dvms) as [dvmPubkey, events]}
+                <JobRequestCardDvmCard {jobRequest} {dvmPubkey} {events} />
+            {/each}
+        </div>
     </div>
 {/if}
 
 {#if $dependentJobs.length > 0}
     <div class="flex flex-col rounded-box bg-base-100 divide-y divide-base-300 gap-4 p-2 ml-10">
-        <h3 class="font-semibold">Dependent jobs ({$dependentJobs.length})</h3>
         {#each $dependentJobs as event}
             {#if event}
                 <svelte:self

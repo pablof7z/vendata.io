@@ -33,6 +33,8 @@
                         <Name ndk={$ndk} userProfile={profile} class="text-xl text-base-100-content truncate" />
                     </div>
                     <span class="text-sm whitespace-normal text-left">{profile?.about||profile?.bio||""}</span>
+
+                    <slot />
                 </div>
             </div>
         </div>
