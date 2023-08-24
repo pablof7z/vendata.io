@@ -105,25 +105,28 @@
     </section>
 
     <section class="max-w-5xl mx-auto relative">
-        <div class="flex absolute top-0 left-0 w-full h-full items-center justify-center text-base-100-content z-50">
+        <div class="flex flex-col gap-8 justify-around absolute top-0 left-0 w-full h-full items-center text-base-100-content z-50">
+            <h1 class="text-8xl font-extrabold tracking-wider text-center mt-24">
+                <span class="bg">Start Exploring</span>
+            </h1>
 
+            <div class="flex flex-row w-full mb-24">
+                <div class="w-1/2 flex flex-row items-center justify-center">
+                    <a href="/dvms" class="btn bg-gradient-to-r from-gradient3 to-gradient4 text-white !rounded-full btn-lg">
+                        Explore DVMs
+                    </a>
+                </div>
+                <div class="w-1/2 flex flex-row items-center justify-center">
+                    <button class="btn bg-gradient-to-l from-gradient3 to-gradient4 text-white !rounded-full btn-lg">
+                        Submit a job
+                    </button>
+                </div>
+            </div>
         </div>
         <div class="card opacity-20">
             <JobRequestEditor
             />
         </div>
-    </section>
-
-    <section class="hero flex flex-col gap-8 h-screen">
-        <h1 class="text-8xl font-extrabold tracking-wider text-center">
-            <span class="bg">Money in,</span>
-            <br>
-            <span class="bg">Data out</span>
-        </h1>
-
-        <h2 class="text-base-100-content text-4xl font-bold">
-            Data Vending Machines
-        </h2>
     </section>
 </div>
 

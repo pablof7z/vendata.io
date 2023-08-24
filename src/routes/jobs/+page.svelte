@@ -35,7 +35,7 @@
     <h1 class="text-base-content-300 text-3xl font-semibold">Your Requests</h1>
 
     {#if $sortedJobRequests}
-        {#each $sortedJobRequests.slice(0, 50) as jobRequest}
+        {#each $sortedJobRequests.slice(0, 50) as jobRequest (jobRequest.id)}
             {#if isTopLevelItem(jobRequest)}
                 <JobRequestCard {jobRequest} compact={true} />
             {/if}
