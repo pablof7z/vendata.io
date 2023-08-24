@@ -166,23 +166,6 @@
             </div>
         </section>
 
-        <section>
-            <div class="flex flex-row gap-4 justify-between">
-                <div class="flex flex-col gap-2">
-                    <h3 class="text-xl">
-                        Payment
-                    </h3>
-                    <span class="font-thin text-base opacity-50">
-                        Max you are willing to pay
-                    </span>
-                </div>
-
-                <div class="flex-grow">
-                    <JobRequestEditorPayment bind:amount />
-                </div>
-            </div>
-        </section>
-
         <div class="join join-vertical">
             <ParamSection kind={parseInt(type)} bind:params nip89Events={$nip89Events} />
 
@@ -234,6 +217,23 @@
 
                 <div class="collapse-content">
                     <section>
+                        <div class="flex flex-row gap-4 justify-between">
+                            <div class="flex flex-col gap-2">
+                                <h3 class="text-xl">
+                                    Payment
+                                </h3>
+                                <span class="font-thin text-base opacity-50">
+                                    Max you are willing to pay
+                                </span>
+                            </div>
+
+                            <div class="flex-grow">
+                                <JobRequestEditorPayment bind:amount />
+                            </div>
+                        </div>
+                    </section>
+
+                    <section>
                         <div class="flex flex-row gap-2 justify-between mb-2">
                             <div class="flex flex-col gap-2">
                                 <h3>
@@ -249,7 +249,7 @@
                                 </span>
                             </div>
 
-                            <input kind="text" class="input input-bordered" placeholder="Desired output (mime kind)" bind:value={tTags} />
+                            <input type="text" class="input input-bordered" placeholder="tag1, tag2, tag3" bind:value={tTags} />
                         </div>
                     </section>
 
@@ -265,7 +265,7 @@
                                     </span>
                                 </div>
 
-                                <input kind="text" class="input input-bordered" placeholder="Desired output (mime kind)" bind:value={outputType} />
+                                <input type="text" class="input input-bordered" placeholder="Desired output (mime kind)" bind:value={outputType} />
                             </div>
                         </section>
                     {/if}

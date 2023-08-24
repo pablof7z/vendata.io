@@ -1,9 +1,6 @@
 <script lang="ts">
 	import type { NDKDvmParam, NDKEvent } from '@nostr-dev-kit/ndk';
     import JobRequestEditorParameters65002 from './JobRequestEditorParameters65002.svelte';
-    import JobRequestEditorParameters65005 from './JobRequestEditorParameters65005.svelte';
-	import { onDestroy } from 'svelte';
-    import ndk from '$stores/ndk';
 	import type { Nip90Param } from '$utils/nip90';
 	import { fade } from 'svelte/transition';
 
@@ -73,6 +70,10 @@
             </div>
         {/if}
     {/each}
+
+    {#if kind === 65002}
+        <JobRequestEditorParameters65002 params={params} />
+    {/if}
 </div>
 
 <details class="collapse collapse-arrow border border-base-300 bg-base-200 join-item">
