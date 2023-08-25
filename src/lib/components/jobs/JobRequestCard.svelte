@@ -119,7 +119,7 @@
     let extraJobInfoText: string = "";
 
     $: if (jobRequest.kind === 65004) {
-        const langTag = jobRequest.getMatchingTags("params")
+        const langTag = jobRequest.getMatchingTags("param")
             .find((t: NDKTag) => ['lang', 'language'].includes(t[1]));
 
         if (langTag) extraJobInfoText = `to ${langTag[2]}`;
@@ -136,13 +136,14 @@
 		<div class="flex w-full flex-row gap-2 text-sm font-normal">
 			<Avatar ndk={$ndk} pubkey={jobRequest.pubkey} class="h-8 w-8 rounded-full" />
 			<div
-				class="flex w-full flex-col justify-between gap-2 xl:flex-row xl:items-center xl:justify-start xl:gap-5"
+				class="flex w-full flex-col justify-between gap-2 xl:flex-row xl:items-center xl:justify-start"
 			>
 				<span class="inline-block max-w-xs" style="overflow-wrap: anywhere;">
 					<Name ndk={$ndk} pubkey={jobRequest.pubkey} class="font-semibold" />
 				</span>
 				requested
 				<JobTypeIcon kind={jobRequest.kind} />
+				{kindToText(jobRequest.kind)}
                 {extraJobInfoText}
 			</div>
 		</div>
