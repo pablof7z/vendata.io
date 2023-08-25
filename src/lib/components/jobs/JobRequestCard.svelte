@@ -226,7 +226,7 @@
 				></div>
 			{:else if shouldShowJobFeedback}
 				<div
-					class=" absolute left-[5.5px] top-4 z-10 -mb-3 ml-2.5 mt-1.5 h-20 w-4 rounded-bl-lg border-b-[1px] border-l-[1px] border-[#858A94]"
+					class=" absolute left-[5.5px] top-4 z-10 -mb-3 ml-2.5 mt-1.5 h-[4.48rem] w-4 rounded-bl-lg border-b-[1px] border-l-[1px] border-[#858A94]"
 				></div>
 			{:else}{/if}
 		</div>
