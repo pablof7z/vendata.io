@@ -59,7 +59,7 @@
         {#if event.kind === 65001 && contentIsImageUrl()}
             <img src={event.content} class="max-h-96" />
         {/if}
-        {#if event.jobRequest?.kind === 65006}
+        {#if event.jobRequest?.kind === 65006 ||  event.jobRequest?.kind === 65007}
             {#if decodedContent}
                 <div class="flex flex-col divide-y divide-y-base-300">
                     {#each decodedContent as tag}
