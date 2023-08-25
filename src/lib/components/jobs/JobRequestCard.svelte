@@ -222,11 +222,11 @@
 
 			{#if $dependentJobs.length > 0}
 				<div
-					class=" absolute left-[5.5px] top-4 z-10 -mb-3 ml-2.5 mt-1.5 h-[5.50rem] w-2 rounded-bl-lg border-b-[1px] border-l-[1px] border-[#858A94]"
+					class=" absolute left-[5.5px] top-6 z-10 -mb-3 ml-2.5 mt-1.5 h-[5rem] w-2 rounded-bl-lg border-b-[1px] border-l-[1px] border-[#858A94]"
 				></div>
 			{:else if shouldShowJobFeedback}
 				<div
-					class=" absolute left-[5.5px] top-4 z-10 -mb-3 ml-2.5 mt-1.5 h-[4.48rem] w-4 rounded-bl-lg border-b-[1px] border-l-[1px] border-[#858A94]"
+					class=" absolute left-[5.5px] top-6 z-10 -mb-3 ml-2.5 mt-1.5 h-12 xl:h-[4rem] w-[0.15rem] xl:w-4  rounded-bl-lg border-b-[1px] border-l-[1px] border-[#858A94]"
 				></div>
 			{:else}{/if}
 		</div>
@@ -234,7 +234,7 @@
 </EventCard>
 
 {#if shouldShowJobFeedback}
-	<div class="ml-10">
+	<div class="  ml-5 lg:ml-10 xl:ml-12 z-[11]">
 		<div class="flex flex-col gap-8 divide-y divide-base-300">
 			{#each Object.entries(dvms) as [dvmPubkey, events]}
 				<JobRequestCardDvmCard {jobRequest} {dvmPubkey} {events} />
@@ -244,7 +244,7 @@
 {/if}
 
 {#if $dependentJobs.length > 0}
-	<div class="rounded-box ml-5 flex flex-col gap-4 divide-y divide-base-300 bg-base-100 p-1">
+	<div class="rounded-box ml-5 xl:ml-9 flex flex-col gap-4 divide-y divide-base-300 bg-base-100 p-1">
 		{#each $dependentJobs as event}
 			{#if event}
 				<svelte:self jobRequest={event} {relatedJobRequests} {compact} />

@@ -47,7 +47,7 @@
 {:else}
     <div class="card card-compact">
         <div class="card-body">
-            <div class="flex flex-row items-center gap-4 text-base-100-content">
+            <div class="flex flex-row items-center gap-4 text-base-100-content overflow-wrap ">
                 <div class="flex flex-row items-center gap-2 font-normal text-sm">
                     <Avatar ndk={$ndk} userProfile={profile} class="w-8 h-8 rounded-full" />
                     <div class="flex flex-row items-center gap-1">
@@ -61,7 +61,7 @@
     </div>
 {/if}
 
-<div class="flex flex-col gap-2">
+<div class="flex flex-col gap-2 text-base"  style="overflow-wrap: anywhere;">
     <DvmCard pubkey={dvmPubkey} kind={jobRequest.kind} />
     <div class="flex flex-col rounded-box bg-base-100 divide-y divide-base-300 gap-4 p-4">
         {#each events as event (event.id)}
