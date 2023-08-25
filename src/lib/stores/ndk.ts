@@ -55,6 +55,8 @@ const ndk = writable(_ndk);
 
 export default ndk;
 
+console.log({cacheAdapter: !!cacheAdapter})
+
 const _bunkerNDK = new NDK({
     explicitRelayUrls: ['wss://relay.nsecbunker.com', 'wss://nostr.vulpem.com'],
     cacheAdapter

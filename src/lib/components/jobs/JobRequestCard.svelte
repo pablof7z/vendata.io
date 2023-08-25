@@ -1,29 +1,22 @@
 <script lang="ts">
-	import { eventUserReference, jobRequestKinds, kindToText } from '$utils';
-	import EventCard from './EventCard.svelte';
-	import { nip19 } from 'nostr-tools';
-	import ndk from '$stores/ndk';
-	import { onDestroy } from 'svelte';
-	import { derived, type Readable, type Writable } from 'svelte/store';
-	import JobFeedbackRow from './JobFeedbackRow.svelte';
-	import JobResultRow from './JobResultRow.svelte';
-	import {
-		type NDKDVMRequest,
-		type NDKTag,
-		type NDKEvent,
-		NDKDVMJobResult,
-		NDKKind,
-		NDKDVMJobFeedback
-	} from '@nostr-dev-kit/ndk';
-	import DvmCard from '$components/dvms/DvmCard.svelte';
-	import JobRequestEditor from './JobRequestEditor/JobRequestEditor.svelte';
-	import { Avatar, Name } from '@nostr-dev-kit/ndk-svelte-components';
-	import JobTypeIcon from './JobTypeIcon.svelte';
-	import { Plus } from 'phosphor-svelte';
-	import { slide } from 'svelte/transition';
-	import JobRequestEditorModal from '$modals/JobRequestEditorModal.svelte';
-	import { openModal } from 'svelte-modals';
-	import JobRequestCardDvmCard from './JobRequestCardDvmCard.svelte';
+	import { eventUserReference, jobRequestKinds, kindToText } from "$utils";
+	import EventCard from "./EventCard.svelte";
+	import { nip19 } from "nostr-tools";
+	import ndk from "$stores/ndk";
+	import { onDestroy } from "svelte";
+	import { derived, type Readable, type Writable } from "svelte/store";
+	import JobFeedbackRow from "./JobFeedbackRow.svelte";
+	import JobResultRow from "./JobResultRow.svelte";
+	import { type NDKDVMRequest, type NDKTag, type NDKEvent, NDKDVMJobResult, NDKKind, NDKDVMJobFeedback } from "@nostr-dev-kit/ndk";
+	import DvmCard from "$components/dvms/DvmCard.svelte";
+	import JobRequestEditor from "./JobRequestEditor/JobRequestEditor.svelte";
+	import { Avatar, Name } from "@nostr-dev-kit/ndk-svelte-components";
+	import JobTypeIcon from "./JobTypeIcon.svelte";
+	import { Plus } from "phosphor-svelte";
+	import { slide } from "svelte/transition";
+	import JobRequestEditorModal from "$modals/JobRequestEditorModal.svelte";
+	import { openModal } from "svelte-modals";
+	import JobDvmEventsCard from "./JobDvmEventsCard.svelte";
 
 	export let jobRequest: NDKDVMRequest;
 	export let compact = false;
@@ -64,22 +57,18 @@
 		}
 	}
 
-	const results = $ndk.storeSubscribe<NDKDVMJobResult>(
-		{
-			kinds: [7, 5, 65000 as number, 65001 as number],
-			...jobRequest.filter()
-		},
-		{ closeOnEose: false, groupableDelay: 1000 },
-		NDKDVMJobResult
-	);
+    const results = $ndk.storeSubscribe(
+        {
+            kinds: [7, 5, 65000 as number, 65001 as number],
+            ...jobRequest.filter(),
+        },
+        { closeOnEose: false, groupableDelay: 1000 },
+    );
 
-	const dependentJobs = $ndk.storeSubscribe<NDKEvent>(
-		{
-			kinds: jobRequestKinds,
-			'#i': [jobRequest.tagId()]
-		},
-		{ closeOnEose: false, groupableDelay: 1000 }
-	);
+    const dependentJobs = $ndk.storeSubscribe({
+        kinds: jobRequestKinds,
+        "#i": [ jobRequest.tagId()]
+    }, { closeOnEose: false, groupableDelay: 1000 });
 
 	const jobResults = derived(results, ($results) => {
 		return $results.filter((result) => result.kind === 65001);
@@ -111,8 +100,11 @@
 		if (!alreadyAdded) {
 			let mappedEvent;
 
-			if (result.kind === NDKKind.DVMJobFeedback) mappedEvent = NDKDVMJobFeedback.from(result);
-			else if (result.kind === NDKKind.DVMJobResult) mappedEvent = NDKDVMJobResult.from(result);
+            if (result.kind === NDKKind.DVMJobFeedback) {
+                mappedEvent = NDKDVMJobFeedback.from(result)
+            } else if (result.kind === NDKKind.DVMJobResult) {
+                mappedEvent = NDKDVMJobResult.from(result);
+            }
 
 			dvms[key].push(mappedEvent);
 			dvms = dvms;
@@ -124,6 +116,14 @@
 	$: shouldShowJobFeedback = !compact; // && ($jobResults && $jobResults.length === 0);
 	let addJobHover = false;
 	let cardHover = false;
+    let extraJobInfoText: string = "";
+
+    $: if (jobRequest.kind === 65004) {
+        const langTag = jobRequest.getMatchingTags("params")
+            .find((t: NDKTag) => ['lang', 'language'].includes(t[1]));
+
+        if (langTag) extraJobInfoText = `to ${langTag[2]}`;
+    }
 </script>
 
 <EventCard
@@ -143,12 +143,7 @@
 				</span>
 				requested
 				<JobTypeIcon kind={jobRequest.kind} />
-				<div
-					class="flex w-[140%] items-center justify-between sm:w-[124%] md:w-[115%] lg:w-[110%] xl:hidden"
-				>
-					requested
-					<JobTypeIcon kind={jobRequest.kind} />
-				</div>
+                {extraJobInfoText}
 			</div>
 		</div>
 	</div>
@@ -180,12 +175,6 @@
 			</div>
 		{/each}
 	</div>
-
-	{#if $jobResults && $jobResults.length > 0}
-		{#each $jobResults as jobResult (jobResult.id)}
-			<JobResultRow event={jobResult} />
-		{/each}
-	{/if}
 
 	{#if cardHover || true}
 		<div
@@ -228,19 +217,19 @@
 				<div
 					class=" absolute left-[5.5px] top-6 z-10 -mb-3 ml-2.5 mt-1.5 h-12 xl:h-[4rem] w-[0.15rem] xl:w-4  rounded-bl-lg border-b-[1px] border-l-[1px] border-[#858A94]"
 				></div>
-			{:else}{/if}
+            {/if}
 		</div>
 	{/if}
 </EventCard>
 
 {#if shouldShowJobFeedback}
-	<div class="  ml-5 lg:ml-10 xl:ml-12 z-[11]">
-		<div class="flex flex-col gap-8 divide-y divide-base-300">
-			{#each Object.entries(dvms) as [dvmPubkey, events]}
-				<JobRequestCardDvmCard {jobRequest} {dvmPubkey} {events} />
-			{/each}
-		</div>
-	</div>
+    <div class="ml-5 lg:ml-10 xl:ml-12 z-[11]">
+        <div class="flex flex-col gap-8 divide-y divide-base-300">
+            {#each Object.entries(dvms) as [dvmPubkey, events]}
+                <JobDvmEventsCard {jobRequest} {dvmPubkey} {events} />
+            {/each}
+        </div>
+    </div>
 {/if}
 
 {#if $dependentJobs.length > 0}

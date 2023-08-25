@@ -57,9 +57,8 @@
         {shouldRestrictResultHeight() ? "max-h-48" : ""}
     ">
         {#if event.kind === 65001 && contentIsImageUrl()}
-            <img src={event.content} class="max-h-96" />
-        {/if}
-        {#if event.jobRequest?.kind === 65006}
+            <img src={event.content} class={$$props.imageClass} />
+        {:else if event.jobRequest?.kind === 65006}
             {#if decodedContent}
                 <div class="flex flex-col divide-y divide-y-base-300">
                     {#each decodedContent as tag}
@@ -82,16 +81,5 @@
         {:else}
             <EventContent ndk={$ndk} {event} showMedia={true} />
         {/if}
-    </div>
-    <div class="w-1/5 self-end text-right">
-        <a href="https://nostr.com/{event.encode()}">
-            <Time
-                live={true}
-                relative={useRelativeTime()}
-                {timestamp}
-                class="text-xs font-normal my-0.5 block opacity-50 whitespace-nowrap"
-            />
-            <JobStatusLabel {status} {event} />
-        </a>
     </div>
 </div>
