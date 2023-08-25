@@ -10,12 +10,10 @@
 
     let dvmParams: Record<string, Nip90Param> = {};
 
-    nip89Events.forEach((nip89Event) => {
+    nip89Events?.forEach((nip89Event) => {
         try {
             const content = JSON.parse(nip89Event.content);
             const nip90Params: Record<string, Nip90Param>[] = content.nip90Params;
-
-            console.log(nip90Params)
 
             // go through each param and add it to the dvmParams object so that if there are multiple values inside the Nip90Param for the same name, all of them are added
             for (const [name, params] of Object.entries(nip90Params)) {
@@ -38,11 +36,20 @@
         }
     })
 
+    function updateTags() {
+        params = [];
+        for (const [ name, value ] of Object.entries(paramValues)) {
+            params.push([name, value]);
+        }
+    }
+
     const showParamMenu: Record<string, boolean> = {};
     const paramValues: Record<string, string> = {};
 
     let showAllParams = false;
 </script>
+
+{JSON.stringify(paramValues)}
 
 <div class="flex flex-col gap-2 mb-4">
     {#each Object.keys(dvmParams) as paramName}
@@ -56,6 +63,8 @@
                         bind:value={paramValues[paramName]}
                         on:focus={() => showParamMenu[paramName] = true}
                         on:blur={() => setTimeout(() => {showParamMenu[paramName] = false}, 20)}
+                        on:change={updateTags}
+                        on:keyup={updateTags}
                     />
                     {#if dvmParams[paramName].values && dvmParams[paramName].values.length > 0 && showParamMenu[paramName]}
                         <ul class="dropdown-content menu z-[1] p-2 shadow bg-base-100 rounded-box" transition:fade={{duration:100}}>
