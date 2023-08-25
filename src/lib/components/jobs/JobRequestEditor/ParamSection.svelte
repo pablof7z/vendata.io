@@ -49,8 +49,6 @@
     let showAllParams = false;
 </script>
 
-{JSON.stringify(paramValues)}
-
 <div class="flex flex-col gap-2 mb-4">
     {#each Object.keys(dvmParams) as paramName}
         {#if dvmParams[paramName].required}
