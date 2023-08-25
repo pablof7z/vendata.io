@@ -32,7 +32,7 @@
 </script>
 
 <div class="max-w-5xl mx-auto flex flex-col gap-6">
-    <h1 class="text-base-content-300 text-3xl font-semibold">Your Requests</h1>
+    <h1 class="text-base-content-300 text-3xl font-semibold text-center">Your Requests</h1>
 
     {#if $sortedJobRequests}
         {#each $sortedJobRequests.slice(0, 50) as jobRequest (jobRequest.id)}

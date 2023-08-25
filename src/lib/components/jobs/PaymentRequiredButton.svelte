@@ -37,7 +37,7 @@
 </script>
 
 <button
-    class="btn btn-neutral"
+    class="btn btn-neutral h-full p-0 px-2"
     on:click|preventDefault|stopPropagation={pay}
 >
     Payment required

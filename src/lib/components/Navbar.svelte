@@ -11,7 +11,7 @@
 
 <div class="navbar mb-2 bg-base-100 px-8">
 	<div class="navbar-start">
-		<div class="dropdown">
+		<div class="dropdown  ">
 			<label tabindex="0" class="btn btn-ghost xl:hidden">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
