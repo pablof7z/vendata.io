@@ -12,7 +12,7 @@
     fixed
     h-screen top-0 bottom-0
     flex justify-center items-center
-    z-10
+    z-20
     w-screen
 " transition:fade on:click={closeModal}>
     <div class="

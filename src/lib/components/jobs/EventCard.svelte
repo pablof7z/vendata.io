@@ -20,13 +20,13 @@
 </script>
 
 <div
-    class="card card-compact group"
+    class="card card-compact group mx-2"
     on:mouseover
     on:mouseleave
     on:mouseout
 >
     <div class="card-body flex flex-col gap-3">
-        <div class="card-title justify-between border-b border-base-300 pb-2">
+        <div class="card-title justify-between  items-start pb-2">
             <slot name="header" />
 
             <div class="flex flex-row gap-2 dropdown dropdown-end text-sm font-normal">
@@ -41,6 +41,7 @@
             </div>
         </div>
 
+
         <slot />
     </div>
 </div>
@@ -49,6 +50,7 @@
     :global(.event-card--dropdown-menu) {
         @apply dropdown-content;
         @apply bg-base-100 p-4 rounded-box;
+        @apply z-10
     }
 
     :global(.event-card--dropdown-menu li) {

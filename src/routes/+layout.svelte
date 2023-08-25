@@ -47,7 +47,7 @@
 <Modals>
     <div
         slot="backdrop"
-        class="backdrop z-10 fixed"
+        class="backdrop z-20 fixed"
         on:click={closeModal}
         transition:fade={{ duration: 100 }}></div>
 </Modals>

@@ -51,7 +51,7 @@
 
 <div class="
     flex flex-row w-full items-center whitespace-normal
-    {event.kind === 65001 ? "text-lg" : ""}
+    {event.kind === 65001 ? "text-base" : ""}
 ">
     <div class="flex-grow overflow-y-auto overflow-x-clip
         {shouldRestrictResultHeight() ? "max-h-48" : ""}

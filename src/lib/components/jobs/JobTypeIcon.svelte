@@ -9,18 +9,24 @@ import { kindToText } from "$utils";
 </script>
 
 <div class="flex flex-row items-center gap-2">
-    <div class="flex items-center justify-center rounded-md w-10 h-10 bg-base-300 text-base-content">
+    <div class="flex items-center justify-center rounded-md w-6 h-6 bg-base-300 text-base-content">
         {#if kind === 65002}
-            <TextAa size="1.5rem" />
+            <TextAa size="1.5rem" class="job-type-icons" />
         {:else if kind === 65004}
-            <Translate size="1.5rem" />
-        {:else if kind === 65006}
-            <Nostr size="1.5rem" />
+            <Translate size="1.5rem"  class="job-type-icons"  />
+        {:else if kind === 65007}
+            <Nostr size="1.5rem"  className="job-type-icons"  />
         {:else if kind === 65005}
-            <Image size="1.5rem" />
+            <Image size="1.5rem"  class="job-type-icons"  />
         {:else}
         {/if}
     </div>
 
     {jobRequestType}
 </div>
+
+<style lang="postcss">
+    :global(.job-type-icons){
+        @apply w-5 h-5
+    }
+</style>
