@@ -6,7 +6,7 @@
 	import { notificationsEnabled } from '$stores/notifications';
 	import CurrentUser from './CurrentUser.svelte';
 	import NotificationButton from './NotificationButton.svelte';
-	import { GitPullRequest, MagicWand, Rss, Sparkle } from 'phosphor-svelte';
+	import { GitPullRequest, MagicWand, PersonSimpleRun, Rss, Sparkle } from 'phosphor-svelte';
 </script>
 
 <div class="navbar mb-2 bg-base-100 px-8">
@@ -85,7 +85,7 @@
 			{#if $currentUser}
 				<li>
 					<a class:tab-active={$page.url.pathname === '/jobs/my'} class="" href="/jobs/my">
-						<GitPullRequest class="h-6 w-6" />
+						<PersonSimpleRun class="h-6 w-6" />
 						Your Jobs
 					</a>
 				</li>

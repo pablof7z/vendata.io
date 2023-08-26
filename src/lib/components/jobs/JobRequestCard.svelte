@@ -8,12 +8,9 @@
 	import { type NDKDVMRequest, type NDKTag, type NDKEvent, NDKDVMJobResult, NDKKind, NDKDVMJobFeedback } from "@nostr-dev-kit/ndk";
 	import { Avatar, Name } from "@nostr-dev-kit/ndk-svelte-components";
 	import JobTypeIcon from "./JobTypeIcon.svelte";
-	import { Plus } from "phosphor-svelte";
-	import { slide } from "svelte/transition";
-	import JobRequestEditorModal from "$modals/JobRequestEditorModal.svelte";
-	import { openModal } from "svelte-modals";
 	import JobDvmEventsCard from "./JobDvmEventsCard.svelte";
 	import type { NDKEventStore } from "@nostr-dev-kit/ndk-svelte";
+	import AddJobButton from "./AddJobButton.svelte";
 
 	export let jobRequest: NDKDVMRequest;
 	export let compact = false;
@@ -73,7 +70,6 @@
 		}
 	}
 
-	let addJobHover = false;
 	let cardHover = false;
     let extraJobInfoText: string = "";
 
@@ -141,35 +137,22 @@
 	{#if cardHover || true}
 		<div
 			class="relative
+			flex flex-row items-center gap-8
         "
 		>
-			<button
-				class="
-                    btn-normal group btn btn-sm inline-block flex w-fit min-w-[32px] flex-row items-center
-                    !rounded-full !bg-base-300 from-gradient3
-                    to-gradient4
-                    p-1 font-normal
-                    transition-all
-                    duration-200 hover:bg-gradient-to-r
-                    hover:px-4
-                    hover:text-white
-                "
-				on:mouseover={() => (addJobHover = true)}
-				on:mouseout={() => (addJobHover = false)}
-				on:click={() => {
-					openModal(JobRequestEditorModal, {
-						suggestedJobRequestInput: jobRequest,
-						jobs: [...$dependentJobs, jobRequest]
-					});
-				}}
-			>
-				<Plus size="1rem" />
-				{#if addJobHover}
-					<span class="line-clamp-1 whitespace-nowrap" transition:slide|local={{ axis: 'x' }}>
-						Add job
-					</span>
-				{/if}
-			</button>
+			<AddJobButton
+				{jobRequest}
+				{dependentJobs}
+			/>
+
+			{#if Object.keys(dvms).length > 0}
+				{Object.keys(dvms).length} DVMs replied
+			{:else if jobRequest.created_at > Math.floor(Date.now() / 1000) - 300}
+				<span class="loading"></span>
+			{:else}
+				No DVMs replied
+			{/if}
+
 		</div>
 	{/if}
 </EventCard>

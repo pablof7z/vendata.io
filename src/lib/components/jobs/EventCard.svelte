@@ -19,14 +19,16 @@
     }
 </script>
 
-<div
+<a
+    {href}
     class="card card-compact group mx-2"
     on:mouseover
     on:mouseleave
     on:mouseout
+    on:click
 >
     <div class="card-body flex flex-col gap-3">
-        <div class="card-title justify-between  items-start pb-2">
+        <div class="card-title justify-between  items-center pb-2">
             <slot name="header" />
 
             <div class="flex flex-row gap-2 dropdown dropdown-end text-sm font-normal">
@@ -44,7 +46,7 @@
 
         <slot />
     </div>
-</div>
+</a>
 
 <style lang="postcss">
     :global(.event-card--dropdown-menu) {

@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { NDKDVMJobResult, NDKDVMJobFeedback, NDKDVMRequest, NDKAppHandlerEvent, type NDKUserProfile, NDKKind, NDKEvent } from "@nostr-dev-kit/ndk";
-	import JobFeedbackRow from "./JobFeedbackRow.svelte";
 	import JobResultRow from "./JobResultRow.svelte";
-	import DvmTile from "./JobRequestEditor/DvmTile.svelte";
 	import { appHandlers } from "$stores/nip89";
 	import { findNip89Event } from "$utils/nip89";
 	import { Avatar, EventContent, Name } from "@nostr-dev-kit/ndk-svelte-components";
@@ -12,8 +10,6 @@
 	import JobStatusLabel from "./JobStatusLabel.svelte";
 	import PaymentRequiredButton from "./PaymentRequiredButton.svelte";
 	import DvmListItem from "$components/dvms/DvmListItem.svelte";
-	import SubtleButton from "$components/buttons/SubtleButton.svelte";
-	import AttentionButton from "$components/buttons/AttentionButton.svelte";
 
     export let jobRequest: NDKDVMRequest;
     export let dvmPubkey: string;
@@ -60,6 +56,26 @@
 
         return diff < 1000*60*60*24;
     }
+
+    let showTime = false;
+
+    function shouldShowTime() {
+        // show time after 5 minutes
+        if (mostRecentEvent) {
+            const diff = Date.now() - (mostRecentEvent.created_at! * 1000);
+            return diff > 1000*60*5;
+        }
+
+        return true;
+    }
+
+    $: if (mostRecentEvent) showTime = shouldShowTime();
+
+    if (!showTime) {
+        setInterval(() => {
+            showTime = shouldShowTime();
+        }, 1000*60);
+    }
 </script>
 
 {#if paymentPending && paymentPendingEvent}
@@ -104,11 +120,13 @@
                         </div>
                     </div>
 
-                    <Time
-                        relative={useRelativeTime(mostRecentEvent)}
-                        timestamp={mostRecentEvent.created_at * 1000}
-                        class="text-sm whitespace-nowrap"
-                    />
+                    {#if showTime}
+                        <Time
+                            relative={useRelativeTime(mostRecentEvent)}
+                            timestamp={mostRecentEvent.created_at * 1000}
+                            class="text-sm whitespace-nowrap"
+                        />
+                    {/if}
 
                     {#if !hasJobResult()}
                         <JobStatusLabel status={mostRecentEvent?.tagValue('status')} />

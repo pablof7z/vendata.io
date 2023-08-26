@@ -10,10 +10,10 @@
 	import TypeCard from './TypeCard.svelte';
 	import { ArrowFatRight, PaperPlaneTilt } from 'phosphor-svelte';
     import ParamSection from './ParamSection.svelte';
-	import type { NDKEventStore } from '@nostr-dev-kit/ndk-svelte';
     import SelectDvms from './SelectDvms.svelte';
     import { appHandlers } from "$stores/nip89";
 	import { derived, type Readable } from 'svelte/store';
+	import AddInputButton from './AddInputButton.svelte';
 
     const dispatch = createEventDispatcher();
 
@@ -22,7 +22,7 @@
     export let suggestedJobRequestInput: NDKDVMRequest | undefined = undefined;
 
     let type: string | undefined;
-    let inputTags: NDKTag[] = [[]];
+    let inputTags: NDKTag[] = [];
     let outputType: string = 'text/plain';
     let amount: number = 1000;
     let params: NDKDvmParam[] = [];
@@ -116,7 +116,7 @@
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 flex-wrap gap-4 justify-start">
 
             {#each jobRequestKinds as kind}
-                <TypeCard {kind} on:click={() => { type = kind.toString() }} />
+                <TypeCard {kind} on:click={() => { type = kind.toString(); if (type === '65006' || type === '65007') { inputTags = []; } }} />
             {/each}
         </div>
     {:else if requireSelectingDvms && $nip89Events}
@@ -139,10 +139,8 @@
         </div>
         <section>
 
-            <div class="flex flex-row items-end gap-4 mb-3">
-                <button class="btn btn-circle btn-accent btn-outline btn-xs whitespace-nowrap ml-2" on:click={addInput}>
-                    +
-                </button>
+            <div class="flex flex-row items-end gap-4 mb-3 items-center">
+                <AddInputButton expand={!inputTags.length && !['65006', '65007'].includes(type)} on:click={addInput} />
                 <div class="flex flex-row gap-2 items-end">
                     <h3>
                         Input

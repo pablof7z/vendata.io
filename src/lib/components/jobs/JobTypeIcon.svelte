@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Nostr from "$icons/Nostr.svelte";
-	import { Image, TextAa, Translate } from "phosphor-svelte";
+	import { Image, TextIndent, Translate } from "phosphor-svelte";
 
     export let kind: number;
 </script>
@@ -8,7 +8,7 @@
 <div class="flex flex-row items-center gap-2">
     <div class="flex items-center justify-center rounded-md w-6 h-6 bg-base-300 text-base-content">
         {#if kind === 65002}
-            <TextAa size="1.5rem" class="job-type-icons" />
+            <TextIndent size="1.5rem" class="job-type-icons" />
         {:else if kind === 65004}
             <Translate size="1.5rem"  class="job-type-icons"  />
         {:else if kind === 65007}
