@@ -21,7 +21,7 @@
     export let jobs: NDKDVMRequest[] | undefined;
     export let suggestedJobRequestInput: NDKDVMRequest | undefined = undefined;
 
-    let type: string | undefined = '65002';
+    let type: string | undefined;
     let inputTags: NDKTag[] = [];
     let outputType: string = 'text/plain';
     let amount: number = 1000;
