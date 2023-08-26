@@ -60,7 +60,7 @@
             <img src={event.content} class={$$props.imageClass} />
         {:else if event.jobRequest?.kind === 65006 ||  event.jobRequest?.kind === 65007}
             {#if decodedContent}
-                <div class="flex flex-col divide-y divide-y-base-300">
+                <div class="flex flex-col">
                     {#each decodedContent as tag}
                         <div class="flex flex-row gap-4 p-2">
                             {#if tag[0] === "p"}

@@ -166,7 +166,7 @@
 {/if}
 
 {#if $dependentJobs.length > 0}
-	<div class="ml-5 xl:ml-9 flex flex-col gap-4 divide-y divide-base-300 bg-base-100 p-1">
+	<div class="ml-5 xl:ml-9 flex flex-col gap-4 bg-base-100 p-1">
 		{#each $dependentJobs as event}
 			{#if event}
 				<svelte:self jobRequest={event} {compact} />
