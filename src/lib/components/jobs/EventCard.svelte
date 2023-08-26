@@ -50,9 +50,9 @@
         </div>
 
 
-        <a {href}>
+        <div {href}>
             <slot />
-        </a>
+        </div>
     </div>
 </div>
 
