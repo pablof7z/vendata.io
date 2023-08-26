@@ -10,6 +10,8 @@
 	import JobStatusLabel from "./JobStatusLabel.svelte";
 	import PaymentRequiredButton from "./PaymentRequiredButton.svelte";
 	import DvmListItem from "$components/dvms/DvmListItem.svelte";
+	import DvmCard from "$components/dvms/DvmCard.svelte";
+	import JobFeedbackRow from "./JobFeedbackRow.svelte";
 
     export let jobRequest: NDKDVMRequest;
     export let dvmPubkey: string;
@@ -23,8 +25,10 @@
     $: if ($appHandlers && !nip89event) nip89event = findNip89Event(dvmPubkey, jobRequest.kind!);
 
     // check if the most recent event has an amount tag
-    $: paymentPending = $events[$events.length-1]?.getMatchingTags('amount').length > 0;
-    $: paymentPendingEvent = $events.find((event) => event.getMatchingTags('amount').length > 0);
+    $: if (mostRecentEvent) {
+        paymentPending = mostRecentEvent.getMatchingTags('amount').length > 0;
+        paymentPendingEvent = $events.find((event) => event.getMatchingTags('amount').length > 0);
+    }
 
     let profile: NDKUserProfile | undefined;
     let fetchingProfile = false;
@@ -44,11 +48,13 @@
         .filter((event) => event.kind === NDKKind.DVMJobResult)
         .map((event) => NDKDVMJobResult.from(event));
 
-    $: mostRecentEvent = $events[$events.length-1];
+    $: mostRecentEvent = $events.sort((a, b) => {
+        return b.created_at! - a.created_at!;
+    })[0];
 
-    function hasJobResult() {
-        return jobResults.length > 0;
-    }
+    let hasJobResult: boolean;
+
+    $: hasJobResult = jobResults.length > 0;
 
     function useRelativeTime(event: NDKEvent) {
         const now = Date.now();
@@ -102,7 +108,22 @@
             </div>
         </DvmListItem>
     {:else}
-        no nip89 event found
+        <DvmCard pubkey={paymentPendingEvent.pubkey} kind={jobRequest.kind} />
+        <div class="h-full flex flex-col justify-end gap-6">
+            {#if paymentPendingEvent.content.length > 0}
+                <div class="p-2 glass rounded-lg">
+                    <div class="bg-base-300 p-4 rounded-lg text-left">
+                        <EventContent
+                            event={paymentPendingEvent}
+                        />
+                    </div>
+                </div>
+            {/if}
+            <PaymentRequiredButton
+                event={paymentPendingEvent}
+                class="!uppercase"
+            />
+        </div>
     {/if}
     </div>
 {:else if !fetchingProfile}
@@ -112,10 +133,10 @@
                 <!-- header -->
                 <div class="flex flex-row items-center justify-between w-full">
                     <div class="flex flex-row items-center gap-2 font-normal text-sm text-base-100-content">
-                        <Avatar ndk={$ndk} userProfile={profile} class="w-8 h-8 rounded-full" />
+                        <Avatar ndk={$ndk} userProfile={profile} pubkey={dvmPubkey} class="w-8 h-8 rounded-full" />
                         <div class="flex flex-row items-center gap-1">
                             <span class="truncate max-w-xs inline-block">
-                                <Name ndk={$ndk} userProfile={profile} class="font-semibold" />
+                                <Name ndk={$ndk} userProfile={profile} pubkey={dvmPubkey} class="font-semibold" />
                             </span>
                         </div>
                     </div>
@@ -128,14 +149,14 @@
                         />
                     {/if}
 
-                    {#if !hasJobResult()}
+                    {#if !hasJobResult}
                         <JobStatusLabel status={mostRecentEvent?.tagValue('status')} />
                     {/if}
                 </div>
 
                 <!-- body -->
                 <!-- if we have a response, we show that -->
-                {#if hasJobResult()}
+                {#if hasJobResult}
                     {#each jobResults as jobResult (jobResult.id)}
                         <JobResultRow event={jobResult} imageClass="max-h-48 rounded-lg" />
                     {/each}
@@ -147,11 +168,16 @@
     </div>
 {/if}
 
-<!--
-<div class="flex flex-col gap-2">
-    <DvmCard pubkey={dvmPubkey} kind={jobRequest.kind} />
+
+<!-- <div class="flex flex-col gap-2">
     <div class="flex flex-col rounded-box bg-base-100 divide-y divide-base-300 gap-4 p-4">
-        {#each events as event (event.id)}
+        {#each $events as event (event.id)}
+            {event.kind}
+            <br>
+            {event.encode()}
+            <br>
+            {event.content}
+            {JSON.stringify(event.rawEvent())}
             {#if event instanceof NDKDVMJobFeedback}
                 <JobFeedbackRow {event} />
             {:else if event instanceof NDKDVMJobResult}

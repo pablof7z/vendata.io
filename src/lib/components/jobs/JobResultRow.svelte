@@ -78,8 +78,10 @@
             {:else}
                 {event.content}
             {/if}
-        {:else}
+        {:else if event.content.length > 0}
             <EventContent ndk={$ndk} {event} showMedia={true} />
+        {:else}
+            <div class="text-base-300-content">DVM sent an empty response</div>
         {/if}
     </div>
 </div>
