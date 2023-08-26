@@ -1,9 +1,11 @@
 <script lang="ts">
-	import type { NDKDVMJobResult, NDKEvent } from "@nostr-dev-kit/ndk";
+	import AttentionButton from "$components/buttons/AttentionButton.svelte";
+	import Lightning from "$icons/Lightning.svelte";
+    import type { NDKDVMJobResult, NDKEvent } from "@nostr-dev-kit/ndk";
     import { requestProvider } from 'webln';
+    import {decode} from "light-bolt11-decoder";
 
     export let event: NDKDVMJobResult | NDKEvent;
-
 
     let amountInMsats: number;
     let invoice: string | null;
@@ -12,17 +14,27 @@
     if (amountTag) {
         amountInMsats = parseInt(amountTag[1]);
         invoice = amountTag[2];
+
+        console.log({amountTag})
+        console.log(invoice);
+
+        try {
+            const decodedInvoice = invoice ? decode(invoice) : null;
+            const amount = parseInt(decodedInvoice?.sections.find((section: any) => section.name === "amount")?.value);
+
+            if (amount) amountInMsats = amount;
+        } catch (e) {
+        }
     }
 
     async function pay() {
+        console.log(invoice);
         if (!amountInMsats) return;
 
         try {
             if (!invoice) {
-                invoice = await event.zap(parseInt(amountInMsats));
+                invoice = await event.zap(amountInMsats);
             }
-
-            console.log({invoice});
 
             const webln = await requestProvider();
             await webln.sendPayment(invoice!);
@@ -36,12 +48,13 @@
     }
 </script>
 
-<button
-    class="btn btn-neutral"
-    on:click|preventDefault|stopPropagation={pay}
+<AttentionButton
+    class="text-lg {$$props.class}"
+    on:click={pay}
 >
-    Payment required
+    <span class="opacity-80">Pay</span>
     {#if amountInMsats}
+        <Lightning />
         {amountInMsats/1000} sats
     {/if}
-</button>
+</AttentionButton>

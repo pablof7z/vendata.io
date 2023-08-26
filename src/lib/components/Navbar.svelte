@@ -6,12 +6,12 @@
 	import { notificationsEnabled } from '$stores/notifications';
 	import CurrentUser from './CurrentUser.svelte';
 	import NotificationButton from './NotificationButton.svelte';
-	import { GitPullRequest, MagicWand, Rss, Sparkle } from 'phosphor-svelte';
+	import { GitPullRequest, MagicWand, PersonSimpleRun, Rss, Sparkle } from 'phosphor-svelte';
 </script>
 
 <div class="navbar mb-2 bg-base-100 px-8">
 	<div class="navbar-start">
-		<div class="dropdown">
+		<div class="dropdown  ">
 			<label tabindex="0" class="btn btn-ghost xl:hidden">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
@@ -63,29 +63,29 @@
 		<ul class="menu menu-horizontal !bg-transparent">
 			<li>
 				<a class:tab-active={$page.url.pathname === '/magic'} class="" href="/magic">
-					<MagicWand class="mr-2 h-6 w-6" />
+					<MagicWand class="h-6 w-6" />
 					Magic</a
 				>
 			</li>
 		</ul>
 
-		<ul class="menu menu-horizontal">
+		<ul class="menu menu-horizontal !bg-transparent">
 			<li>
 				<a class:tab-active={$page.url.pathname === '/jobs'} class="" href="/jobs">
-					<Rss class="mr-2 h-6 w-6" />
+					<Rss class="h-6 w-6" />
 					Job Request Feed</a
 				>
 			</li>
 			<li>
 				<a class:tab-active={$page.url.pathname === '/dvms'} class="" href="/dvms">
-					<Sparkle class="mr-2 h-6 w-6" />
+					<Sparkle class="h-6 w-6" />
 					Data Vending Machines
 				</a>
 			</li>
 			{#if $currentUser}
 				<li>
 					<a class:tab-active={$page.url.pathname === '/jobs/my'} class="" href="/jobs/my">
-						<GitPullRequest class="mr-2 h-6 w-6" />
+						<PersonSimpleRun class="h-6 w-6" />
 						Your Jobs
 					</a>
 				</li>

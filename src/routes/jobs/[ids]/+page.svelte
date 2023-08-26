@@ -40,10 +40,6 @@
             NDKDVMRequest
         );
     }
-
-    let jobRequest: NDKDVMRequest | undefined;
-
-    let showNewJobRequest = false;
 </script>
 
 <div class="flex flex-col gap-8">
@@ -51,23 +47,5 @@
         {#each $jobRequests as jobRequest (jobRequest)}
             <JobRequestCard jobRequest={jobRequest} relatedJobRequests={relatedJobRequests} />
         {/each}
-
-        {#if showNewJobRequest}
-            <div class="card">
-                <JobRequestEditor
-                    bind:jobRequest
-                    jobs={Array.from($relatedJobRequests)}
-                    on:created={() => showNewJobRequest = false}
-                    on:cancel={() => showNewJobRequest = false}
-                />
-            </div>
-        {:else}
-            <button
-                class="btn btn-primary self-start"
-                on:click={() => showNewJobRequest = true}
-            >
-                Add new job request
-            </button>
-        {/if}
     </div>
 </div>

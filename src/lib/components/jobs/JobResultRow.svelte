@@ -51,15 +51,14 @@
 
 <div class="
     flex flex-row w-full items-center whitespace-normal
-    {event.kind === 65001 ? "text-lg" : ""}
+    {event.kind === 65001 ? "text-base" : ""}
 ">
     <div class="flex-grow overflow-y-auto overflow-x-clip
         {shouldRestrictResultHeight() ? "max-h-48" : ""}
     ">
         {#if event.kind === 65001 && contentIsImageUrl()}
-            <img src={event.content} class="max-h-96" />
-        {/if}
-        {#if event.jobRequest?.kind === 65006 ||  event.jobRequest?.kind === 65007}
+            <img src={event.content} class={$$props.imageClass} />
+        {:else if event.jobRequest?.kind === 65006 ||  event.jobRequest?.kind === 65007}
             {#if decodedContent}
                 <div class="flex flex-col divide-y divide-y-base-300">
                     {#each decodedContent as tag}
@@ -82,16 +81,5 @@
         {:else}
             <EventContent ndk={$ndk} {event} showMedia={true} />
         {/if}
-    </div>
-    <div class="w-1/5 self-end text-right">
-        <a href="https://nostr.com/{event.encode()}">
-            <Time
-                live={true}
-                relative={useRelativeTime()}
-                {timestamp}
-                class="text-xs font-normal my-0.5 block opacity-50 whitespace-nowrap"
-            />
-            <JobStatusLabel {status} {event} />
-        </a>
     </div>
 </div>
