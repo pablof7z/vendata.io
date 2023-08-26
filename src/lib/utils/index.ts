@@ -30,6 +30,8 @@ export function kindToDescription(kind: number): string | undefined {
 
 export const jobRequestKinds = Object.keys(kinds).map((k) => parseInt(k));
 
-export function eventUserReference(event: NDKEvent): string {
-    return "#" + event.id.slice(0, 4);
+export function eventUserReference(event: NDKEvent | string): string {
+    const id = typeof event === "string" ? event : event.id;
+
+    return "#" + id.slice(0, 4);
 }

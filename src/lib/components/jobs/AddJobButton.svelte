@@ -27,8 +27,9 @@
         to-gradient4
         p-1 font-normal
         transition-all
+        px-3
         duration-200
-        {hover ? "bg-gradient-to-r px-4 text-white" : ""}
+        {hover ? "bg-gradient-to-r text-white" : ""}
     "
     on:mouseover={() => (hover = true)}
     on:mouseout={() => (hover = false)}

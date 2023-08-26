@@ -21,7 +21,7 @@
     export let jobs: NDKDVMRequest[] | undefined;
     export let suggestedJobRequestInput: NDKDVMRequest | undefined = undefined;
 
-    let type: string | undefined;
+    let type: string | undefined = '65002';
     let inputTags: NDKTag[] = [];
     let outputType: string = 'text/plain';
     let amount: number = 1000;
@@ -76,6 +76,8 @@
 
         await jobRequest.sign();
 
+        // console.log(jobRequest.rawEvent().tags)
+
         dispatch('created');
         await jobRequest.publish();
     }
@@ -116,7 +118,7 @@
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 flex-wrap gap-4 justify-start">
 
             {#each jobRequestKinds as kind}
-                <TypeCard {kind} on:click={() => { type = kind.toString(); if (type === '65006' || type === '65007') { inputTags = []; } }} />
+                <TypeCard {kind} on:click={() => { type = kind.toString(); if (type === '65006' || type === '65007') { addInput(); } }} />
             {/each}
         </div>
     {:else if requireSelectingDvms && $nip89Events}

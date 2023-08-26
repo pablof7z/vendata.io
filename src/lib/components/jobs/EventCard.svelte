@@ -19,8 +19,10 @@
     }
 </script>
 
-<a
-    {href}
+<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+<div
     class="card card-compact group mx-2"
     on:mouseover
     on:mouseleave
@@ -33,20 +35,26 @@
 
             <div class="flex flex-row gap-2 dropdown dropdown-end text-sm font-normal">
                 <EventCardDropdownMenu {event} />
-                <a {href}>
-                    <Time
-                        relative={useRelativeTime()}
-                        {timestamp}
-                        class="text-sm whitespace-nowrap"
-                    />
-                </a>
+                {#if !$$slots.headerRight}
+                    <a {href}>
+                        <Time
+                            relative={useRelativeTime()}
+                            {timestamp}
+                            class="text-sm whitespace-nowrap"
+                        />
+                    </a>
+                {:else}
+                    <slot name="headerRight" />
+                {/if}
             </div>
         </div>
 
 
-        <slot />
+        <a {href}>
+            <slot />
+        </a>
     </div>
-</a>
+</div>
 
 <style lang="postcss">
     :global(.event-card--dropdown-menu) {

@@ -1,15 +1,18 @@
 <script lang="ts">
-    import type { NDKDvmParam } from "@nostr-dev-kit/ndk";
+    import { createEventDispatcher } from "svelte";
 
-    export let params: NDKDvmParam[] = [];
+    export let range: string[] | undefined = undefined;
+
+    const dispatch = createEventDispatcher();
 
     function updateRange() {
-        params = params.filter(param => param[0] !== "range");
-
         if (rangeStart && rangeEnd) {
-            params.push([ "range", rangeStart, rangeEnd ]);
-            params = params;
+            range = [ rangeStart.toString(), rangeEnd.toString() ];
+        } else {
+            range = undefined;
         }
+
+        dispatch('change', { name: 'range', value: range });
     }
 
     let rangeStart: string | undefined;
