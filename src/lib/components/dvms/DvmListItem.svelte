@@ -6,6 +6,11 @@
 
     export let dvm: NDKEvent;
 
+    /**
+     * Event that should be referrenced in the card (if different than the app handler event)
+     */
+    export let event: NDKEvent | undefined = dvm;
+
     const user = dvm.author;
     const kTag = dvm.tagValue("k");
     let supportedKind: number;
@@ -21,6 +26,7 @@
     }
 
     const profilePromise = new Promise((resolve) => {
+        dvm.fet
         if (profile?.name && profile?.image) {
             resolve(profile);
         } else {
@@ -32,7 +38,7 @@
 </script>
 
 {#await profilePromise then}
-    <div class="flex flex-row gap-4 w-full truncate card card-compact image-full !rounded-2xl">
+    <div class="flex flex-row gap-4 w-full card card-compact image-full !rounded-2xl overflow-hidden">
         <figure>
             <Avatar ndk={$ndk} userProfile={profile} {user} class="h-full bg-accent2" />
         </figure>
@@ -41,7 +47,7 @@
                 <div class="flex flex-col gap-2 whitespace-normal w-full">
                     <div class="flex flex-row justify-between dropdown dropdown-end">
                         <Name ndk={$ndk} userProfile={profile} {user} class="text-xl text-base-100-content truncate font-semibold" />
-                        <EventCardDropdownMenu ndk={$ndk} event={dvm}>
+                        <EventCardDropdownMenu ndk={$ndk} {event}>
 
                         </EventCardDropdownMenu>
                     </div>
@@ -57,18 +63,22 @@
                 </div>
             </div>
 
-            {#if kTags.length > 0}
-                <h3 class="text-base-100-content text-lg">Features</h3>
-                {#each dvm.getMatchingTags("k") as tag}
-                    {#if jobRequestKinds.includes(parseInt(tag[1]))}
-                        {kindToText(parseInt(tag[1]))}
-                    {/if}
-                {/each}
-            {/if}
+            {#if !$$slots.default}
+                {#if kTags.length > 0}
+                    <h3 class="text-base-100-content text-lg">Features</h3>
+                    {#each dvm.getMatchingTags("k") as tag}
+                        {#if jobRequestKinds.includes(parseInt(tag[1]))}
+                            {kindToText(parseInt(tag[1]))}
+                        {/if}
+                    {/each}
+                {/if}
 
-            <a class="btn btn-accent glass" href="/dvms/{user.npub}">
-                View DVM
-            </a>
+                <a class="btn btn-accent glass" href="/dvms/{user.npub}">
+                    View DVM
+                </a>
+            {:else}
+                <slot />
+            {/if}
         </div>
     </div>
 {/await}

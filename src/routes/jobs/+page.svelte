@@ -31,7 +31,7 @@
     });
 </script>
 
-<div class="max-w-5xl mx-auto flex flex-col gap-6">
+<div class="max-w-3xl mx-auto flex flex-col gap-6">
     <h1 class="text-base-content-300 text-3xl font-semibold text-center">Your Requests</h1>
 
     {#if $sortedJobRequests}

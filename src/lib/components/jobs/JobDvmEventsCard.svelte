@@ -1,18 +1,23 @@
 <script lang="ts">
-	import DvmCard from "$components/dvms/DvmCard.svelte";
 	import { NDKDVMJobResult, NDKDVMJobFeedback, NDKDVMRequest, NDKAppHandlerEvent, type NDKUserProfile, NDKKind, NDKEvent } from "@nostr-dev-kit/ndk";
 	import JobFeedbackRow from "./JobFeedbackRow.svelte";
 	import JobResultRow from "./JobResultRow.svelte";
 	import DvmTile from "./JobRequestEditor/DvmTile.svelte";
 	import { appHandlers } from "$stores/nip89";
 	import { findNip89Event } from "$utils/nip89";
-	import { Avatar, EventCard, Name } from "@nostr-dev-kit/ndk-svelte-components";
+	import { Avatar, EventContent, Name } from "@nostr-dev-kit/ndk-svelte-components";
 	import ndk from "$stores/ndk";
 	import Time from "svelte-time/src/Time.svelte";
+	import type { NDKEventStore } from "@nostr-dev-kit/ndk-svelte";
+	import JobStatusLabel from "./JobStatusLabel.svelte";
+	import PaymentRequiredButton from "./PaymentRequiredButton.svelte";
+	import DvmListItem from "$components/dvms/DvmListItem.svelte";
+	import SubtleButton from "$components/buttons/SubtleButton.svelte";
+	import AttentionButton from "$components/buttons/AttentionButton.svelte";
 
     export let jobRequest: NDKDVMRequest;
     export let dvmPubkey: string;
-    export let events: (NDKDVMJobFeedback | NDKDVMJobResult)[];
+    export let events: NDKEventStore<NDKEvent>;
 
     let nip89event: NDKAppHandlerEvent | undefined;
 
@@ -22,8 +27,8 @@
     $: if ($appHandlers && !nip89event) nip89event = findNip89Event(dvmPubkey, jobRequest.kind!);
 
     // check if the most recent event has an amount tag
-    $: paymentPending = events[events.length-1]?.getMatchingTags('amount').length > 0;
-    $: paymentPendingEvent = events.find((event) => event.getMatchingTags('amount').length > 0);
+    $: paymentPending = $events[$events.length-1]?.getMatchingTags('amount').length > 0;
+    $: paymentPendingEvent = $events.find((event) => event.getMatchingTags('amount').length > 0);
 
     let profile: NDKUserProfile | undefined;
     let fetchingProfile = false;
@@ -39,9 +44,11 @@
     let jobResults: NDKDVMJobResult[] = [];
     let mostRecentEvent: NDKEvent | undefined;
 
-    $: jobResults = events.filter((event) => event.kind === NDKKind.DVMJobResult) as NDKDVMJobResult[];
+    $: jobResults = $events
+        .filter((event) => event.kind === NDKKind.DVMJobResult)
+        .map((event) => NDKDVMJobResult.from(event));
 
-    $: mostRecentEvent = events[events.length-1];
+    $: mostRecentEvent = $events[$events.length-1];
 
     function hasJobResult() {
         return jobResults.length > 0;
@@ -56,13 +63,32 @@
 </script>
 
 {#if paymentPending && paymentPendingEvent}
+    <div class="w-1/2">
     {#if nip89event}
-        <DvmTile dvm={nip89event}>
-            <JobFeedbackRow event={paymentPendingEvent} />
-        </DvmTile>
+        <DvmListItem
+            dvm={nip89event}
+            event={paymentPendingEvent || mostRecentEvent}
+        >
+            <div class="h-full flex flex-col justify-end gap-6">
+                {#if paymentPendingEvent.content.length > 0}
+                    <div class="p-2 glass rounded-lg">
+                        <div class="bg-base-300 p-4 rounded-lg text-left">
+                            <EventContent
+                                event={paymentPendingEvent}
+                            />
+                        </div>
+                    </div>
+                {/if}
+                <PaymentRequiredButton
+                    event={paymentPendingEvent}
+                    class="!uppercase"
+                />
+            </div>
+        </DvmListItem>
     {:else}
         no nip89 event found
     {/if}
+    </div>
 {:else if !fetchingProfile}
     <div class="card card-compact">
         <div class="card-body">
@@ -83,6 +109,10 @@
                         timestamp={mostRecentEvent.created_at * 1000}
                         class="text-sm whitespace-nowrap"
                     />
+
+                    {#if !hasJobResult()}
+                        <JobStatusLabel status={mostRecentEvent?.tagValue('status')} />
+                    {/if}
                 </div>
 
                 <!-- body -->
@@ -92,12 +122,13 @@
                         <JobResultRow event={jobResult} imageClass="max-h-48 rounded-lg" />
                     {/each}
                 {:else}
-                    no results
+                    {mostRecentEvent.content}
                 {/if}
             </div>
         </div>
     </div>
 {/if}
+
 <!--
 <div class="flex flex-col gap-2">
     <DvmCard pubkey={dvmPubkey} kind={jobRequest.kind} />

@@ -1,5 +1,6 @@
 <script lang="ts">
-	import type { NDKDVMJobResult, NDKEvent } from "@nostr-dev-kit/ndk";
+	import AttentionButton from "$components/buttons/AttentionButton.svelte";
+import type { NDKDVMJobResult, NDKEvent } from "@nostr-dev-kit/ndk";
     import { requestProvider } from 'webln';
 
     export let event: NDKDVMJobResult | NDKEvent;
@@ -22,8 +23,6 @@
                 invoice = await event.zap(parseInt(amountInMsats));
             }
 
-            console.log({invoice});
-
             const webln = await requestProvider();
             await webln.sendPayment(invoice!);
             // TODO we should check here if the payment was successful, with a timer
@@ -36,12 +35,12 @@
     }
 </script>
 
-<button
-    class="btn btn-neutral h-full p-0 px-2"
-    on:click|preventDefault|stopPropagation={pay}
+<AttentionButton
+    class={$$props.class}
+    on:click={pay}
 >
     Payment required
     {#if amountInMsats}
         {amountInMsats/1000} sats
     {/if}
-</button>
+</AttentionButton>
