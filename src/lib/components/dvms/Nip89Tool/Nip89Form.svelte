@@ -83,7 +83,7 @@
     </div>
 
     <div class="flex flex-col items-start">
-        <label for="supportedKind" class="block">Supported Features</label>
+        <label for="supportedKind" class="block">Supported Feature</label>
         <select
             bind:value={supportedKind} class="select select-bordered w-full">
             {#each jobRequestKinds as kind}
