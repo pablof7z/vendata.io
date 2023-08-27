@@ -11,6 +11,7 @@
 	import JobDvmEventsCard from "./JobDvmEventsCard.svelte";
 	import type { NDKEventStore } from "@nostr-dev-kit/ndk-svelte";
 	import AddJobButton from "./AddJobButton.svelte";
+	import ElementConnector from "$components/ElementConnector.svelte";
 
 	export let jobRequest: NDKDVMRequest;
 	export let compact = false;
@@ -20,6 +21,8 @@
 	let inputs: NDKTag[] = [];
 
 	inputs = jobRequest.getMatchingTags('i');
+
+	let currentElement: HTMLElement | undefined = undefined;
 
 	function encodeInput(input: NDKTag) {
 		try {
@@ -70,7 +73,6 @@
 		}
 	}
 
-	let cardHover = false;
     let extraJobInfoText: string = "";
 
     $: if (jobRequest.kind === 65004) {
@@ -84,29 +86,29 @@
 <EventCard
 	event={jobRequest}
 	href={`/jobs/${jobRequest.encode()}`}
-	on:mouseover={() => (cardHover = true)}
-	on:mouseout={() => (cardHover = false)}
 >
-	<div class="text-base-100-content flex w-full flex-row gap-4" slot="header">
+	<div class="flex w-full flex-row gap-4" slot="header">
 		<div class="flex w-full flex-row gap-2 text-sm font-normal">
-			<!-- {$results.length} result events
-			{$dependentJobs.length} dependentJobs events -->
 			<Avatar ndk={$ndk} pubkey={jobRequest.pubkey} class="h-8 w-8 rounded-full whitespace-nowrap" />
-			<div
-				class="flex w-full flex-col justify-between gap-2 xl:flex-row xl:items-center xl:justify-start"
-			>
-				<span class="inline-block max-w-xs whitespace-nowrap truncate" style="overflow-wrap: anywhere;">
-					<Name ndk={$ndk} pubkey={jobRequest.pubkey} class="font-semibold" />
+			<div class="
+				flex w-full flex-row gap-2 items-center justify-start truncate whitespace-nowrap
+			">
+				<span class="md:inline-block max-w-xs whitespace-nowrap truncate hidden" style="overflow-wrap: anywhere;">
+					<Name ndk={$ndk} pubkey={jobRequest.pubkey} class="font-semibold text-base-100-content" />
 				</span>
-				requested
-				<JobTypeIcon {kind} />
-				{kindToText(kind)}
-                {extraJobInfoText}
+				<span class="hidden md:inline-block">requested</span>
+				<a href={`/jobs/${jobRequest.encode()}`} class="flex flex-row items-center gap-1">
+					<JobTypeIcon {kind} />
+					<span class="text-base-100-content">
+						{kindToText(kind)}
+					</span>
+					{extraJobInfoText}
+				</a>
 			</div>
 		</div>
 	</div>
 
-	<div class="flex flex-col gap-2 whitespace-normal">
+	<div class="flex flex-col gap-2 whitespace-normal mb-4">
 		{#each inputs as input}
 			<div class="flex flex-row items-baseline gap-2">
 				<h3 class="font-semibold">
@@ -117,9 +119,9 @@
 				</h3>
 				{#if input[2] === 'job'}
 					<div class="flex flex-row gap-2">
-						<span>output of</span>
+						<span class="hidden md:inline">output of</span>
 						<a href="/jobs/{encodeInput(input)}" class="text-accent">
-							#{input[1]?.slice(0, 8)}
+							job #{input[1]?.slice(0, 8)}
 						</a>
 						(job chaining)
 					</div>
@@ -134,42 +136,42 @@
 		{/each}
 	</div>
 
-	{#if cardHover || true}
-		<div
-			class="relative
-			flex flex-row items-center gap-8
-        "
-		>
-			<AddJobButton
-				{jobRequest}
-				{dependentJobs}
-			/>
+	<div
+		class="relative
+		flex flex-row items-center gap-8
+	" bind:this={currentElement}
+	>
+		<AddJobButton
+			{jobRequest}
+			{dependentJobs}
+		/>
 
-			{#if Object.keys(dvms).length > 0}
-				{Object.keys(dvms).length} DVMs replied
-			{:else if jobRequest.created_at > Math.floor(Date.now() / 1000) - 300}
-				<span class="loading"></span>
-			{:else}
-				No DVMs replied
-			{/if}
+		{#if Object.keys(dvms).length > 0}
+			{Object.keys(dvms).length} DVMs replied
+		{:else if jobRequest.created_at > Math.floor(Date.now() / 1000) - 300}
+			<span class="loading"></span>
+		{:else}
+			No DVMs replied
+		{/if}
 
-		</div>
-	{/if}
+	</div>
 </EventCard>
 
 {#if Object.keys(dvms).length > 0}
-	<div class="pl-5 lg:pl-10 xl:pl-12 z-[11]">
+	<div class="pl-5 lg:pl-10 xl:pl-12 z-[11] list grid md:grid-cols-2 md:gap-6">
 		{#each Object.entries(dvms) as [dvmPubkey, events]}
-			<JobDvmEventsCard {jobRequest} {dvmPubkey} {events} />
+			<JobDvmEventsCard {jobRequest} {dvmPubkey} {events} parentElement={currentElement}/>
 		{/each}
 	</div>
 {/if}
 
 {#if $dependentJobs.length > 0}
-	<div class="ml-5 xl:ml-9 flex flex-col gap-4 bg-base-100 p-1">
+	<div class="ml-8 list-container pt-4">
 		{#each $dependentJobs as event}
 			{#if event}
-				<svelte:self jobRequest={event} {compact} />
+				<ElementConnector from={currentElement}>
+					<svelte:self jobRequest={event} {compact} />
+				</ElementConnector>
 			{:else}
 				no event?
 			{/if}

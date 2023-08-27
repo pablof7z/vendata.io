@@ -23,7 +23,7 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <div
-    class="card card-compact group mx-2"
+    class="card card-compact group md:mx-2 !rounded-none md:!rounded-box"
     on:mouseover
     on:mouseleave
     on:mouseout
@@ -37,11 +37,13 @@
                 <EventCardDropdownMenu {event} />
                 {#if !$$slots.headerRight}
                     <a {href}>
-                        <Time
-                            relative={useRelativeTime()}
-                            {timestamp}
-                            class="text-sm whitespace-nowrap"
-                        />
+                        <span class="hidden md:inline">
+                            <Time
+                                relative={useRelativeTime()}
+                                {timestamp}
+                                class="text-sm whitespace-nowrap"
+                            />
+                        </span>
                     </a>
                 {:else}
                     <slot name="headerRight" />

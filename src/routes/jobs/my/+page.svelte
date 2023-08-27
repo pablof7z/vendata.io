@@ -38,10 +38,12 @@
         </div>
     </div>
 
-    {#if $sortedJobRequests && $sortedJobRequests.length > 0}
-        {#each $sortedJobRequests as jobRequest (jobRequest.id)}
-            <JobRequestCard {jobRequest} compact={true} />
-        {/each}
-    {/if}
+    <div class="list-container">
+        {#if $sortedJobRequests && $sortedJobRequests.length > 0}
+            {#each $sortedJobRequests as jobRequest (jobRequest.id)}
+                <JobRequestCard {jobRequest} compact={true} />
+            {/each}
+        {/if}
+    </div>
 </div>
 

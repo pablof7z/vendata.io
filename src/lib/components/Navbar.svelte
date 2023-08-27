@@ -9,9 +9,9 @@
 	import { GitPullRequest, MagicWand, PersonSimpleRun, Rss, Sparkle } from 'phosphor-svelte';
 </script>
 
-<div class="navbar mb-2 bg-base-100 px-8">
+<div class="navbar mb-2 bg-base-100">
 	<div class="navbar-start">
-		<div class="dropdown  ">
+		<div class="dropdown ">
 			<label tabindex="0" class="btn btn-ghost xl:hidden">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
@@ -53,9 +53,9 @@
 				</li>
 			</ul>
 		</div>
-		<a href="/" class="btn btn-ghost text-xl normal-case">
+		<a href="/" class="btn btn-ghost text-xl normal-case px-0 hover:bg-transparent">
 			<Logo class="h-12 w-12" />
-			<h1 class="text-xl font-bold">VENDATA</h1>
+			<h1 class="text-base md:text-xl font-bold">VENDATA</h1>
 		</a>
 	</div>
 

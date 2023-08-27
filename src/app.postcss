@@ -21,4 +21,15 @@
 	body > div {
 		height: 100%;
 	}
+
+	.list-container {
+		@apply flex flex-col divide-y divide-base-300;
+		@apply md:divide-y-0 md:gap-4;
+
+	}
+
+	.event-card--dropdown-menu {
+		@apply absolute top-0 right-0 z-10;
+		@apply !opacity-75;
+	}
 }

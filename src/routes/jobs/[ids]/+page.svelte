@@ -34,7 +34,7 @@
             }
         }
 
-        jobRequests = $ndk.storeSubscribe(
+        jobRequests = $ndk.storeSubscribe<NDKDVMRequest>(
             { "ids": hexids },
             { closeOnEose: true },
             NDKDVMRequest
@@ -43,7 +43,7 @@
 </script>
 
 <div class="flex flex-col gap-8">
-    <div class="flex flex-col gap-2">
+    <div class="list-container">
         {#each $jobRequests as jobRequest (jobRequest)}
             <JobRequestCard jobRequest={jobRequest} relatedJobRequests={relatedJobRequests} />
         {/each}

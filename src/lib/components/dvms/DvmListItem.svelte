@@ -26,7 +26,6 @@
     }
 
     const profilePromise = new Promise((resolve) => {
-        dvm.fet
         if (profile?.name && profile?.image) {
             resolve(profile);
         } else {
@@ -38,7 +37,7 @@
 </script>
 
 {#await profilePromise then}
-    <div class="flex flex-row gap-4 w-full card card-compact image-full !rounded-2xl overflow-hidden">
+    <div class="flex flex-row gap-4 w-full card card-compact image-full md:!rounded-2xl overflow-hidden">
         <figure>
             <Avatar ndk={$ndk} userProfile={profile} {user} class="h-full bg-accent2" />
         </figure>
@@ -51,7 +50,7 @@
 
                         </EventCardDropdownMenu>
                     </div>
-                    <div class="text-base max-h-96 overflow-clip overflow-y-auto">
+                    <div class="text-base max-h-48 md:max-h-96 overflow-clip overflow-y-auto">
                         <EventContent
                             ndk={$ndk}
                             event={new NDKEvent(undefined, {

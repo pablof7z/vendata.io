@@ -51,7 +51,7 @@
     {#if showNip89Tool}
         <Nip89Tool on:cancel={() => showNip89Tool = false} on:done={() => showNip89Tool = false} />
     {:else}
-        <div class="grid grid-cols-3 gap-4 mt-10">
+        <div class="grid md:grid-cols-3 px-2 md:px-0 gap-4 mt-10">
             {#each $appHandlers as dvm (dvm.id)}
                 <DvmListItem {dvm} />
             {/each}

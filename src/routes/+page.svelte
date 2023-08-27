@@ -16,7 +16,7 @@
 
 		<div class="flex flex-col items-start gap-3 lg:w-1/2 lg:gap-0">
 			<h1
-				class="text-center text-7xl font-extrabold tracking-wider sm:text-start sm:text-6xl lg:text-8xl"
+				class="text-center text-5xl md:text-7xl font-extrabold tracking-wider sm:text-start sm:text-6xl lg:text-8xl"
 			>
 				<span class="bg">Money in,</span>
 				<br class="hidden md:block" />
@@ -29,8 +29,8 @@
 	</section>
 
 	<section class="flex flex-col gap-8">
-		<h1 class="flex flex-col items-center gap-4 text-center text-5xl font-black">
-			<div class="text-3xl font-bold opacity-80">Meet your</div>
+		<h1 class="flex flex-col items-center gap-4 text-center text-3xl md:text-5xl font-black">
+			<div class="text-2xl md:text-3xl font-bold opacity-80">Meet your</div>
 			<span class="bg"> Data Vending Machine </span>
 		</h1>
 
