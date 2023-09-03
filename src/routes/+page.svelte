@@ -117,9 +117,9 @@
                     </a>
                 </div>
                 <div class="w-1/2 flex flex-row items-center justify-center">
-                    <button class="btn bg-gradient-to-l from-gradient3 to-gradient4 text-white !rounded-full btn-lg">
+                    <a href="/jobs/new" class="btn bg-gradient-to-l from-gradient3 to-gradient4 text-white !rounded-full btn-lg">
                         Submit a job
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>
