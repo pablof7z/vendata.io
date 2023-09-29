@@ -49,7 +49,7 @@
         <EventContent ndk={$ndk} {event} showMedia={true} />
     </div>
     <div class="w-1/5 self-end text-right">
-        <a href="https://nostr.com/{event.encode()}">
+        <a href="https://njump.me/{event.encode()}">
             <Time
                 live={true}
                 relative={useRelativeTime()}
